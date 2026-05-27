@@ -801,7 +801,7 @@ async function generatePDF() {
 
     // ─── ОТПРАВКА В TELEGRAM И GOOGLE SHEETS ───────────────
     const TG_TOKEN = "7931870492:AAEVgBcZr76Ud1f8P_OnBM8ETBY3wqy1GQY";
-    const TG_CHAT  = "ВСТАВЬТЕ_CHAT_ID_СЮДА"; // ← замените на ваш Chat ID из getUpdates
+    const TG_CHAT  = "1804783478"; // ← замените на ваш Chat ID из getUpdates
     const SHEET_URL= "https://script.google.com/macros/s/AKfycbwXDR8glnHhuImzwsIxdH3ti1hctyVkCHSwvXrkLbqSIqU5zPT9ROxdlg3gyDnUjjmP/exec";
 
     const tgText = `📋 *НОВЫЙ ДОГОВОР — Business School Amanat*\n\n👤 *ФИО:* ${d.fio}\n🆔 *ИИН:* ${d.iin}\n📍 *Адрес:* ${d.address||'—'}\n📞 *Телефон:* ${d.phone||'—'}\n📧 *Email:* ${d.email||'—'}\n💰 *Сумма:* ${d.amount}\n📅 *Дата:* ${today}\n🔖 *№:* ${contractNo}`;
