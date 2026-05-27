@@ -1,1096 +1,850 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Business School Amanat — Подписание договора</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Business School Amanat — Договор</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Manrope:wght@300;400;500;600&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --gold: #C8A96E;
-    --gold-light: #e2c98a;
-    --dark: #0D0D0D;
-    --dark2: #141414;
-    --dark3: #1e1e1e;
-    --text: #e8e2d8;
-    --muted: #8a8580;
-    --border: rgba(200,169,110,0.2);
-    --radius: 12px;
-  }
+:root {
+  --gold: #c8a96e;
+  --gold-light: #e0c99a;
+  --bg: #0b0b0b;
+  --card: #141414;
+  --border: #222;
+  --text: #ede8dc;
+  --muted: rgba(237,232,220,0.4);
+  --red: #d96060;
+}
 
-  * { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  padding: 36px 16px 60px;
+}
 
-  body {
-    background: var(--dark);
-    color: var(--text);
-    font-family: 'Manrope', sans-serif;
-    font-weight: 300;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+.wrap { max-width: 820px; margin: auto; }
 
-  body::before {
-    content:'';
-    position:fixed; inset:0; z-index:0;
-    background:
-      radial-gradient(ellipse 80% 60% at 10% 0%, rgba(200,169,110,0.06) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 80% at 90% 100%, rgba(200,169,110,0.04) 0%, transparent 60%);
-    pointer-events:none;
-  }
+/* ── LOGO ── */
+.logo {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-top: 8px;
+}
+.logo-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: .06em;
+}
+.logo-sub {
+  font-size: 10px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.logo-line {
+  width: 60px;
+  height: 1px;
+  background: var(--gold);
+  margin: 14px auto 0;
+  opacity: .4;
+}
 
-  .container {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 60px 24px 80px;
-    position: relative; z-index:1;
-  }
+/* ── CARD ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 28px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: .5;
+}
 
-  header {
-    text-align:center;
-    margin-bottom: 56px;
-  }
-  .logo-line {
-    display:flex; align-items:center; justify-content:center; gap:16px;
-    margin-bottom: 24px;
-  }
-  .logo-line::before, .logo-line::after {
-    content:'';
-    flex:1; max-width:60px;
-    height:1px; background: var(--border);
-  }
-  .logo-badge {
-    width: 52px; height: 52px; border-radius: 50%;
-    background: linear-gradient(135deg, rgba(200,169,110,0.15), rgba(200,169,110,0.05));
-    border: 1px solid var(--border);
-    display:flex; align-items:center; justify-content:center;
-    font-size:20px;
-  }
-  header h1 {
-    font-family:'Playfair Display', serif;
-    font-size: clamp(22px, 5vw, 32px);
-    font-weight:700;
-    color:#fff;
-    letter-spacing:0.01em;
-    line-height:1.2;
-    margin-bottom: 10px;
-  }
-  header h1 span { color: var(--gold); }
-  header p {
-    font-size:13px;
-    color: var(--muted);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
+.step-badge {
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: .7;
+  margin-bottom: 20px;
+}
+.card h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gold-light);
+  margin-bottom: 24px;
+  letter-spacing: .04em;
+}
 
-  .steps {
-    display:flex; align-items:center; justify-content:center;
-    gap:0; margin-bottom: 52px;
-  }
-  .step {
-    display:flex; flex-direction:column; align-items:center; gap:6px;
-    position:relative;
-  }
-  .step-dot {
-    width:32px; height:32px; border-radius:50%;
-    border: 1.5px solid var(--border);
-    display:flex; align-items:center; justify-content:center;
-    font-size:12px; font-weight:600; color: var(--muted);
-    transition: all 0.4s;
-    background: var(--dark2);
-  }
-  .step.active .step-dot {
-    border-color: var(--gold);
-    color: var(--gold);
-    background: rgba(200,169,110,0.08);
-    box-shadow: 0 0 16px rgba(200,169,110,0.2);
-  }
-  .step.done .step-dot {
-    border-color: var(--gold);
-    background: var(--gold);
-    color: var(--dark);
-  }
-  .step-label {
-    font-size:10px; color: var(--muted); text-transform:uppercase;
-    letter-spacing:0.08em; white-space:nowrap;
-  }
-  .step.active .step-label { color: var(--gold); }
-  .step-line {
-    width: 60px; height:1px;
-    background: var(--border);
-    margin-bottom: 18px;
-    flex-shrink:0;
-  }
+/* ── FORM ── */
+label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.req { color: var(--gold); opacity: 1; }
 
-  .card {
-    background: var(--dark2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 36px 32px;
-    margin-bottom: 20px;
-    display:none;
-    animation: fadeUp 0.5s ease forwards;
-  }
-  .card.active { display:block; }
+input, select {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #0d0d0d;
+  color: var(--text);
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 20px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+input:focus, select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(200,169,110,.08);
+}
+select option { background: #141414; }
 
-  @keyframes fadeUp {
-    from { opacity:0; transform:translateY(16px); }
-    to   { opacity:1; transform:translateY(0); }
-  }
+/* ── BUTTONS ── */
+.btn {
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 10px;
+  background: #222;
+  color: var(--text);
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  transition: opacity .2s, transform .12s;
+  margin-bottom: 8px;
+}
+.btn:hover { opacity: .82; }
+.btn:active { transform: scale(.975); }
+.btn-gold { background: var(--gold); color: #0b0b0b; font-weight: 600; }
+.btn-ghost { background: transparent; border: 1px solid #2e2e2e; }
 
-  .card-title {
-    font-family:'Playfair Display', serif;
-    font-size:20px; color:#fff;
-    margin-bottom: 28px;
-    display:flex; align-items:center; gap:10px;
-  }
-  .card-title::after {
-    content:''; flex:1; height:1px; background: var(--border);
-  }
+.error-msg { color: var(--red); font-size: 12px; margin-bottom: 14px; min-height: 16px; }
 
-  .field { margin-bottom: 20px; }
-  label {
-    display:block;
-    font-size:11px; font-weight:600;
-    letter-spacing:0.1em; text-transform:uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-  label span { color: var(--gold); }
+/* ── CONTRACT VIEW ── */
+.contract-view {
+  background: #fff;
+  color: #111;
+  border-radius: 12px;
+  padding: 30px 26px;
+  font-family: 'Jost', sans-serif;
+  font-size: 11.5px;
+  line-height: 1.9;
+  margin-bottom: 22px;
+  max-height: 68vh;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+}
+.contract-view h2 {
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 3px;
+  color: #000;
+  letter-spacing: .04em;
+}
+.contract-view .sub {
+  text-align: center;
+  font-size: 9.5px;
+  color: #999;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.ct-cols { display: flex; gap: 22px; margin-bottom: 12px; }
+.ct-col {
+  flex: 1; min-width: 0;
+  border-left: 3px solid #c8a96e;
+  padding-left: 11px;
+}
+@media (max-width: 580px) { .ct-cols { flex-direction: column; } }
+.ct-col-head {
+  font-size: 9px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: #888;
+  border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-bottom: 9px;
+}
+.ct-section-title {
+  font-size: 11.5px; font-weight: 700; color: #000;
+  margin: 14px 0 5px; letter-spacing: .02em;
+}
+.ct-p { margin-bottom: 5px; color: #222; }
+.ct-hr { border: none; border-top: 1px solid #e4e4e4; margin: 14px 0; }
+.ct-info-row { display: flex; gap: 8px; margin-bottom: 3px; }
+.ct-info-label { color: #888; min-width: 95px; }
+.ct-info-val { font-weight: 600; color: #000; }
+.ct-parties {
+  background: #f9f7f2; border-radius: 8px;
+  padding: 12px 16px; margin-bottom: 14px;
+  border: 1px solid #e8e0d0;
+}
+.ct-notice {
+  background: #fff8ed; border-left: 3px solid #c8a96e;
+  padding: 8px 12px; border-radius: 0 6px 6px 0;
+  margin: 10px 0; font-size: 11px; color: #555;
+}
 
-  input, select {
-    width:100%;
-    background: var(--dark3);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 8px;
-    padding: 13px 16px;
-    font-family:'Manrope', sans-serif;
-    font-size:14px;
-    color: var(--text);
-    outline:none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  input:focus, select:focus {
-    border-color: rgba(200,169,110,0.5);
-    box-shadow: 0 0 0 3px rgba(200,169,110,0.08);
-  }
-  input::placeholder { color: rgba(138,133,128,0.5); }
+/* ── SIGNATURE ── */
+.sign-hint { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+.canvas-wrap {
+  position: relative;
+  background: #fff;
+  border: 2px dashed #2e2e2e;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  cursor: crosshair;
+  transition: border-color .2s;
+}
+.canvas-wrap:hover { border-color: var(--gold); }
+#sigCanvas {
+  display: block; width: 100%; height: 190px;
+  touch-action: none; cursor: crosshair;
+}
+.canvas-placeholder {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px; opacity: .28;
+  pointer-events: none; user-select: none;
+}
 
-  .field-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.sign-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.sign-actions .btn { flex: 1; min-width: 110px; margin-bottom: 0; }
+.contract-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.contract-actions .btn { flex: 1; min-width: 130px; margin-bottom: 0; }
 
-  .contract-box {
-    background: var(--dark3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 24px;
-    max-height: 420px;
-    overflow-y: auto;
-    font-size:12.5px;
-    line-height:1.8;
-    color: rgba(232,226,216,0.75);
-    scrollbar-width: thin;
-    scrollbar-color: var(--gold) var(--dark3);
-  }
-  .contract-box h3 {
-    color: var(--gold);
-    font-family:'Playfair Display', serif;
-    font-size:15px;
-    margin-bottom:12px;
-    text-align:center;
-  }
-  .contract-box h4 {
-    color: var(--gold);
-    font-size:12px;
-    margin: 10px 0 5px;
-    letter-spacing:0.05em;
-  }
-  .contract-box .highlight { color: var(--gold-light); font-weight:600; }
-  .contract-box p { margin-bottom:8px; }
-
-  /* Two-column contract layout */
-  .contract-bilingual {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-  .contract-col {
-    border-right: 1px solid var(--border);
-    padding-right: 16px;
-  }
-  .contract-col:last-child {
-    border-right: none;
-    padding-right: 0;
-    padding-left: 4px;
-  }
-  .contract-col-title {
-    font-size:11px;
-    color: var(--gold);
-    letter-spacing:0.1em;
-    text-transform:uppercase;
-    margin-bottom:10px;
-    font-weight:600;
-    text-align:center;
-  }
-
-  .check-row {
-    display:flex; align-items:flex-start; gap:12px;
-    background: rgba(200,169,110,0.04);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-    cursor:pointer;
-    margin-top:20px;
-    transition: border-color 0.2s;
-  }
-  .check-row:hover { border-color: rgba(200,169,110,0.4); }
-  .check-row input { width:16px; height:16px; flex-shrink:0; margin-top:2px; cursor:pointer; accent-color: var(--gold); }
-  .check-row span { font-size:13px; line-height:1.6; color: var(--muted); }
-  .check-row span strong { color: var(--text); }
-
-  /* SIGNATURE — увеличена */
-  .sig-wrap {
-    background: #fff;
-    border-radius: 8px;
-    overflow:hidden;
-    position:relative;
-    border: 2px solid rgba(200,169,110,0.5);
-    min-height: 280px;
-  }
-  #signCanvas {
-    display:block; cursor:crosshair;
-    width:100%; height:280px;
-    touch-action:none;
-  }
-  .sig-hint {
-    position:absolute; top:50%; left:50%;
-    transform:translate(-50%,-50%);
-    color:#bbb; font-size:15px; pointer-events:none;
-    transition: opacity 0.3s;
-    text-align:center;
-  }
-  .sig-hint span { display:block; font-size:28px; margin-bottom:6px; }
-  .sig-clear {
-    position:absolute; top:8px; right:8px;
-    background: rgba(0,0,0,0.08);
-    border:none; border-radius:4px;
-    padding:6px 14px; font-size:12px; cursor:pointer;
-    color:#666; font-family:'Manrope', sans-serif;
-    transition: background 0.2s;
-  }
-  .sig-clear:hover { background: rgba(0,0,0,0.15); }
-
-  .btn {
-    width:100%;
-    padding: 16px;
-    background: linear-gradient(135deg, var(--gold), var(--gold-light));
-    color: var(--dark);
-    border:none; border-radius: 10px;
-    font-family:'Manrope', sans-serif;
-    font-size:14px; font-weight:700;
-    letter-spacing:0.05em;
-    cursor:pointer;
-    transition: opacity 0.2s, transform 0.1s;
-    display:flex; align-items:center; justify-content:center; gap:8px;
-  }
-  .btn:hover:not(:disabled) { opacity:0.9; transform:translateY(-1px); }
-  .btn:disabled { opacity:0.4; cursor:not-allowed; }
-  .btn-outline {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-  }
-  .btn-outline:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
-
-  .err-msg { color:#e05252; font-size:11px; margin-top:5px; display:none; }
-
-  .loading {
-    display:inline-block; width:14px; height:14px;
-    border:2px solid rgba(0,0,0,0.2);
-    border-top-color:#000;
-    border-radius:50%;
-    animation: spin 0.7s linear infinite;
-  }
-  @keyframes spin { to { transform:rotate(360deg); } }
-
-  /* DONE */
-  #step-done {
-    text-align:center;
-    display:none;
-  }
-  #step-done.active { display:block; }
-  .done-icon {
-    width:72px; height:72px; border-radius:50%;
-    background: linear-gradient(135deg, rgba(200,169,110,0.2), rgba(200,169,110,0.05));
-    border: 1px solid var(--gold);
-    display:flex; align-items:center; justify-content:center;
-    font-size:30px;
-    margin: 0 auto 24px;
-  }
-  #step-done h2 {
-    font-family:'Playfair Display', serif;
-    font-size:26px; color:#fff; margin-bottom:10px;
-  }
-  #step-done p {
-    color: var(--muted); font-size:14px; line-height:1.7; margin-bottom:24px;
-  }
-  .status-list { margin-bottom:24px; }
-  .status-item {
-    display:flex; align-items:center; gap:12px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-    font-size:13px;
-  }
-  .status-item:last-child { border-bottom:none; }
-  .status-icon { font-size:18px; width:24px; text-align:center; }
-  .status-text { flex:1; color: var(--muted); }
-  .status-badge { font-size:11px; font-weight:600; padding:3px 8px; border-radius:4px; }
-  .badge-ok { background:rgba(80,200,80,0.1); color:#5cc85c; }
-  .badge-err { background:rgba(200,80,80,0.1); color:#e05252; }
-  .badge-pending { background:rgba(200,169,110,0.1); color:var(--gold); }
+/* ── DONE ── */
+.done-wrap { text-align: center; padding: 40px 20px; }
+.done-icon { font-size: 56px; margin-bottom: 14px; }
+.done-title {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--gold); font-size: 26px; margin-bottom: 8px;
+}
+.done-sub { opacity: .5; font-size: 14px; margin-bottom: 24px; }
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<div class="container">
-  <header>
-    <div class="logo-line">
-      <div class="logo-badge">🎓</div>
-    </div>
-    <h1>Business School <span>Amanat</span></h1>
-    <p>Договор об оказании образовательных услуг</p>
-  </header>
-
-  <div class="steps" id="stepsBar">
-    <div class="step active" id="s1"><div class="step-dot">1</div><div class="step-label">Данные</div></div>
-    <div class="step-line"></div>
-    <div class="step" id="s2"><div class="step-dot">2</div><div class="step-label">Договор</div></div>
-    <div class="step-line"></div>
-    <div class="step" id="s3"><div class="step-dot">3</div><div class="step-label">Подпись</div></div>
-    <div class="step-line"></div>
-    <div class="step" id="s4"><div class="step-dot">✓</div><div class="step-label">Готово</div></div>
+  <div class="logo">
+    <div class="logo-title">Business School Amanat</div>
+    <div class="logo-sub">Договор об оказании услуг · Қызмет көрсету шарты</div>
+    <div class="logo-line"></div>
   </div>
 
-  <!-- STEP 1: FORM -->
-  <div class="card active" id="step-1">
-    <div class="card-title">Ваши данные / Сіздің деректеріңіз</div>
+  <!-- ШАГ 1: ФОРМА -->
+  <div class="card" id="stepForm">
+    <div class="step-badge">Шаг 1 из 3 — Ваши данные</div>
+    <h3>Данные заказчика</h3>
 
-    <div class="field">
-      <label>ФИО / Т.А.Ә. <span>*</span></label>
-      <input type="text" id="fio" placeholder="Иванов Иван Иванович" autocomplete="name">
-      <div class="err-msg" id="err-fio">Введите полное имя / Толық атыңызды енгізіңіз</div>
-    </div>
+    <label>ФИО / Т.А.Ә. <span class="req">*</span></label>
+    <input id="fio" placeholder="Иванов Иван Иванович" autocomplete="name">
 
-    <div class="field">
-      <label>ИИН <span>*</span></label>
-      <input type="text" id="iin" placeholder="000000000000" maxlength="12">
-      <div class="err-msg" id="err-iin">Введите 12-значный ИИН / 12 таңбалы ЖСН енгізіңіз</div>
-    </div>
+    <label>ИИН / ЖСН <span class="req">*</span></label>
+    <input id="iin" placeholder="000000000000" maxlength="12" inputmode="numeric">
 
-    <div class="field">
-      <label>Адрес проживания / Мекенжайы <span>*</span></label>
-      <input type="text" id="address" placeholder="г. Алматы, ул. Абая, д. 1, кв. 1">
-      <div class="err-msg" id="err-address">Введите адрес / Мекенжайды енгізіңіз</div>
-    </div>
+    <label>Серия и номер паспорта / Төлқұжат</label>
+    <input id="passport" placeholder="AB1234567">
 
-    <div class="field-row">
-      <div class="field">
-        <label>Телефон <span>*</span></label>
-        <input type="tel" id="phone" placeholder="+7 777 000 0000">
-        <div class="err-msg" id="err-phone">Введите номер телефона / Телефон нөмірін енгізіңіз</div>
-      </div>
-      <div class="field">
-        <label>Email</label>
-        <input type="email" id="email" placeholder="email@example.com">
-      </div>
-    </div>
+    <label>Адрес / Мекенжай</label>
+    <input id="address" placeholder="г. Алматы, ул. ...">
 
-    <div class="field">
-      <label>Сумма договора / Шарт сомасы</label>
-      <select id="amount">
-        <option value="250 000 тенге">250 000 тенге (со скидкой / жеңілдікпен)</option>
-        <option value="135 000 тенге" selected>135 000 тенге (акционная цена / акциялық баға)</option>
-      </select>
-    </div>
+    <label>Телефон</label>
+    <input id="phone" placeholder="+7 (___) ___-__-__" inputmode="tel">
 
-    <button class="btn" onclick="goToStep2()">Продолжить / Жалғастыру →</button>
+    <label>Email</label>
+    <input id="email" placeholder="email@example.com" inputmode="email">
+
+    <label>Стоимость услуг / Қызмет құны <span class="req">*</span></label>
+    <select id="amount">
+      <option value="135 000 тенге">135 000 тенге</option>
+      <option value="200 000 тенге">200 000 тенге</option>
+      <option value="400 000 тенге">400 000 тенге</option>
+    </select>
+
+    <div id="formError" class="error-msg"></div>
+    <button class="btn btn-gold" onclick="goToContract()">Продолжить — читать договор →</button>
   </div>
 
-  <!-- STEP 2: CONTRACT -->
-  <div class="card" id="step-2">
-    <div class="card-title">Ознакомьтесь с договором / Шартпен танысыңыз</div>
-
-    <div class="contract-box" id="contractPreview"></div>
-
-    <div class="check-row" onclick="toggleAgree()">
-      <input type="checkbox" id="agreeCheck">
-      <span>Я, <strong id="fioPreview">—</strong>, ознакомился(-ась) с условиями договора об оказании образовательных услуг и <strong>полностью согласен(-на)</strong> с его условиями. / Мен білім беру қызметтерін көрсету шартының талаптарымен таныстым және <strong>толығымен келісемін</strong>.</span>
+  <!-- ШАГ 2: ПРОСМОТР ДОГОВОРА -->
+  <div class="card" id="stepContract" style="display:none">
+    <div class="step-badge">Шаг 2 из 3 — Ознакомьтесь с договором</div>
+    <div class="contract-view" id="contractView"></div>
+    <div class="contract-actions">
+      <button class="btn btn-ghost" onclick="goBack()">← Изменить данные</button>
+      <button class="btn" onclick="goToSign()">Перейти к подписи →</button>
     </div>
-
-    <button class="btn" id="btnStep3" onclick="goToStep3()" disabled style="margin-top:20px">
-      Перейти к подписанию / Қол қоюға өту →
-    </button>
-    <button class="btn btn-outline" onclick="goBack(2)" style="margin-top:12px">← Назад / Артқа</button>
   </div>
 
-  <!-- STEP 3: SIGNATURE -->
-  <div class="card" id="step-3">
-    <div class="card-title">Подпись / Қол қою</div>
-
-    <p style="font-size:13px; color:var(--muted); margin-bottom:20px; line-height:1.7">
-      Распишитесь в поле ниже. Подпись будет добавлена в договор.<br>
-      <span style="font-size:12px;">Төменде қол қойыңыз. Қол қою шартқа қосылады.</span>
-    </p>
-
-    <div class="sig-wrap">
-      <canvas id="signCanvas" width="680" height="280"></canvas>
-      <div class="sig-hint" id="sigHint">
-        <span>✍️</span>Распишитесь здесь / Мұнда қол қойыңыз
-      </div>
-      <button class="sig-clear" onclick="clearSig()">Очистить / Тазалау</button>
+  <!-- ШАГ 3: ПОДПИСЬ -->
+  <div class="card" id="stepSign" style="display:none">
+    <div class="step-badge">Шаг 3 из 3 — Подпись</div>
+    <p class="sign-hint">Распишитесь в поле ниже пальцем или мышью</p>
+    <div class="canvas-wrap">
+      <canvas id="sigCanvas"></canvas>
+      <div class="canvas-placeholder" id="canvasPlaceholder">✍️ Нарисуйте подпись здесь</div>
     </div>
-
-    <div style="margin-top:8px; font-size:11px; color:var(--muted);">
-      Подпись будет включена в PDF-документ / Қол қою PDF-құжатқа енгізіледі
+    <div id="signError" class="error-msg"></div>
+    <div class="sign-actions">
+      <button class="btn btn-ghost" onclick="clearSig()">✕ Очистить</button>
+      <button class="btn btn-ghost" onclick="goToContract()">← Назад</button>
+      <button class="btn btn-gold" onclick="generatePDF()">✓ Подписать и скачать PDF</button>
     </div>
-
-    <button class="btn" id="btnSubmit" onclick="submitContract()" style="margin-top:24px">
-      ✓ Подписать и получить договор / Қол қойып шарт алу
-    </button>
-    <button class="btn btn-outline" onclick="goBack(3)" style="margin-top:12px">← Назад / Артқа</button>
   </div>
 
-  <!-- DONE -->
-  <div class="card" id="step-done">
-    <div class="done-icon">✅</div>
-    <h2>Договор подписан!</h2>
-    <p>Шарт қол қойылды! PDF автоматически скачан на ваше устройство. / PDF автоматты түрде жүктелді.</p>
-    <div class="status-list" id="statusList"></div>
-    <button class="btn" onclick="downloadAgain()" style="margin-top:8px">
-      ↓ Скачать ещё раз / Қайта жүктеу
-    </button>
+  <!-- ГОТОВО -->
+  <div class="card" id="stepDone" style="display:none">
+    <div class="done-wrap">
+      <div class="done-icon">✅</div>
+      <div class="done-title">Договор подписан!</div>
+      <div class="done-sub">PDF сохранён на ваше устройство</div>
+      <button class="btn btn-ghost" onclick="restart()" style="max-width:220px;margin:auto">Новый договор</button>
+    </div>
   </div>
+
 </div>
+
+<!-- jsPDF из CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
-const CONFIG = {
-  TELEGRAM_BOT_TOKEN: 'YOUR_BOT_TOKEN',
-  TELEGRAM_CHAT_ID: 'YOUR_CHAT_ID',
-  GOOGLE_SCRIPT_URL: 'YOUR_GOOGLE_SCRIPT_URL'
-};
-
+// ─── STATE ───────────────────────────────────────────────
 let formData = {};
-let signatureDataUrl = null;
-let pdfBlob = null;
+let sigInitialized = false;
+let drawing = false;
+let sigCtx = null;   // исправлено: НЕ обращаемся к canvas при загрузке страницы
 
-const canvas = document.getElementById('signCanvas');
-const ctx = canvas.getContext('2d');
-let drawing = false, lastX=0, lastY=0, hasSig=false;
+// ─── STEP 1 → 2: SHOW CONTRACT ───────────────────────────
+function goToContract() {
+  const fio      = document.getElementById('fio').value.trim();
+  const iin      = document.getElementById('iin').value.trim();
+  const passport = document.getElementById('passport').value.trim();
+  const address  = document.getElementById('address').value.trim();
+  const phone    = document.getElementById('phone').value.trim();
+  const email    = document.getElementById('email').value.trim();
+  const amount   = document.getElementById('amount').value;
 
-function getPos(e) {
-  const r = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / r.width;
-  const scaleY = canvas.height / r.height;
-  const src = e.touches ? e.touches[0] : e;
-  return { x: (src.clientX - r.left)*scaleX, y: (src.clientY - r.top)*scaleY };
-}
-function startDraw(e) {
-  e.preventDefault();
-  drawing=true;
-  const p=getPos(e); lastX=p.x; lastY=p.y;
-  if (!hasSig) { hasSig=true; document.getElementById('sigHint').style.opacity='0'; }
-}
-function draw(e) {
-  if (!drawing) return; e.preventDefault();
-  const p=getPos(e);
-  ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(p.x,p.y);
-  ctx.strokeStyle='#1a1a3a'; ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.lineJoin='round';
-  ctx.stroke();
-  lastX=p.x; lastY=p.y;
-}
-function stopDraw() { drawing=false; }
-canvas.addEventListener('mousedown', startDraw);
-canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('mouseup', stopDraw);
-canvas.addEventListener('mouseleave', stopDraw);
-canvas.addEventListener('touchstart', startDraw, {passive:false});
-canvas.addEventListener('touchmove', draw, {passive:false});
-canvas.addEventListener('touchend', stopDraw);
-
-function clearSig() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  hasSig=false;
-  signatureDataUrl=null;
-  document.getElementById('sigHint').style.opacity='1';
-}
-function isSignatureEmpty() { return !hasSig; }
-
-// ── VALIDATION ──────────────────────────────────────────────────────────────
-function validate() {
-  let ok = true;
-  const fields = [
-    { id:'fio', errId:'err-fio', check: v => v.trim().length >= 3 },
-    { id:'iin', errId:'err-iin', check: v => /^\d{12}$/.test(v.trim()) },
-    { id:'address', errId:'err-address', check: v => v.trim().length >= 5 },
-    { id:'phone', errId:'err-phone', check: v => v.trim().length >= 7 },
-  ];
-  fields.forEach(f => {
-    const v = document.getElementById(f.id).value;
-    const err = document.getElementById(f.errId);
-    if (!f.check(v)) { err.style.display='block'; ok=false; }
-    else err.style.display='none';
-  });
-  return ok;
-}
-
-// ── STEP NAVIGATION ─────────────────────────────────────────────────────────
-function setStep(n) {
-  [1,2,3].forEach(i => document.getElementById('step-'+i).classList.remove('active'));
-  document.getElementById('step-done').classList.remove('active');
-  if (n === 'done') {
-    document.getElementById('step-done').classList.add('active');
-  } else {
-    document.getElementById('step-'+n).classList.add('active');
-  }
-  [1,2,3,4].forEach(i => {
-    const s = document.getElementById('s'+i);
-    s.classList.remove('active','done');
-    const ni = n === 'done' ? 5 : n;
-    if (i < ni) s.classList.add('done');
-    else if (i == ni) s.classList.add('active');
-  });
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-function goToStep2() {
-  if (!validate()) return;
-  formData = {
-    fio: document.getElementById('fio').value.trim(),
-    iin: document.getElementById('iin').value.trim(),
-    address: document.getElementById('address').value.trim(),
-    phone: document.getElementById('phone').value.trim(),
-    email: document.getElementById('email').value.trim(),
-    amount: document.getElementById('amount').value,
-    date: new Date().toLocaleDateString('ru-RU', {day:'2-digit',month:'long',year:'numeric'})
-  };
-  document.getElementById('fioPreview').textContent = formData.fio;
-  renderContract();
-  setStep(2);
-}
-function goToStep3() { setStep(3); }
-function goBack(from) { setStep(from - 1); }
-function toggleAgree() {
-  const cb = document.getElementById('agreeCheck');
-  cb.checked = !cb.checked;
-  document.getElementById('btnStep3').disabled = !cb.checked;
-}
-
-// ── CONTRACT RENDER (двуязычный) ────────────────────────────────────────────
-function renderContract() {
-  const d = formData;
-  const html = `
-<div class="contract-bilingual">
-  <div class="contract-col">
-    <div class="contract-col-title">🇷🇺 Русский</div>
-    <h3>ДОГОВОР ОБ ОКАЗАНИИ УСЛУГ</h3>
-    <p>г. Алматы, ${d.date}</p>
-    <p><strong>Исполнитель:</strong> ИП Business School Amanat, в лице ЕРАЛИЕВ БАКЫТЖАН НУРКЕНУЛЫ, действующего на основании лицензии KZ82UWQ06452512, с одной стороны, и</p>
-    <p><strong>Заказчик:</strong> <span class="highlight">${d.fio}</span>, ИИН: <span class="highlight">${d.iin}</span>, проживающий(ая) по адресу: <span class="highlight">${d.address}</span>, тел.: <span class="highlight">${d.phone}</span>, с другой стороны, совместно именуемые «Стороны», заключили настоящий договор о нижеследующем:</p>
-    <h4>1. Предмет Договора</h4>
-    <p>1.1. Исполнитель обязуется предоставить Заказчику: образовательные услуги по обучению товарному бизнесу, включая теоретическую и практическую подготовку; доступ в закрытый канал с актуальным ассортиментом товаров; услугу фулфилмента.</p>
-    <p>1.2. Заказчик обязуется оплатить указанные услуги в соответствии с условиями Договора.</p>
-    <h4>2. Программа обучения</h4>
-    <p>2.1. Программа включает: Kaspi магазин, Wildberries, Ozon, Ebay, Shopify. Поставщики: Китай, Турция, Америка. Доступ к закрытому каналу «Жабык чат». Чек-листы, шаблоны, консультации преподавателей.</p>
-    <h4>3. Порядок оказания услуг</h4>
-    <p>3.1. Обучение проводится в формате онлайн-курсов. 3.2. Доступ к закрытому каналу на весь срок действия договора.</p>
-    <h4>4. Порядок оплаты</h4>
-    <p>4.1. Полная стоимость услуг: <strong>500 000 тенге</strong>. Со скидкой: <strong>250 000 тенге</strong>. Акционная цена: <strong>135 000 тенге</strong>. Сумма по настоящему договору: <strong>${d.amount}</strong>.</p>
-    <p>4.2. Оплата производится в размере 100% до начала оказания услуг.</p>
-    <p>4.3. Способы оплаты: Kaspi QR или Kaspi Red (рассрочка).</p>
-    <p>4.5. Оплаченные средства возврату не подлежат, за исключением случаев, предусмотренных законодательством РК.</p>
-    <h4>5. Права и обязанности Сторон</h4>
-    <p>5.1. Исполнитель обязуется предоставить услуги в полном объёме, обеспечить доступ к закрытому каналу, оказывать консультации.</p>
-    <p>5.3. Заказчик обязуется своевременно оплатить услуги, соблюдать правила платформы, не передавать доступ третьим лицам.</p>
-    <h4>6–9. Ответственность, форс-мажор, срок действия</h4>
-    <p>6.1. Стороны несут ответственность согласно законодательству РК. 7.1. Форс-мажор освобождает стороны от ответственности. 8.1. Договор вступает в силу с момента подписания и полной оплаты. 9.1. Все изменения — только в письменной форме.</p>
-    <h4>10. Реквизиты Сторон</h4>
-    <p><strong>Исполнитель:</strong> ИП Business School Amanat, ИИК: KZ96722C000028394403, БИН: 010512501511, Адрес: с. Каскелен, Толе би 39а, Тел: +7 777 121 3963</p>
-    <p><strong>Заказчик:</strong> <span class="highlight">${d.fio}</span>, ИИН: ${d.iin}, Адрес: ${d.address}, Тел: ${d.phone}</p>
-  </div>
-  <div class="contract-col">
-    <div class="contract-col-title">🇰🇿 Қазақша</div>
-    <h3>ҚЫЗМЕТ КӨРСЕТУ ШАРТЫ</h3>
-    <p>Алматы қ., ${d.date}</p>
-    <p><strong>Орындаушы:</strong> ИП Business School Amanat атынан, KZ82UWQ06452512 лицензиясы негізінде әрекет ететін ЕРАЛИЕВ БАКЫТЖАН НУРКЕНУЛЫ, бір тараптан, және</p>
-    <p><strong>Тапсырыс беруші:</strong> <span class="highlight">${d.fio}</span>, ЖСН: <span class="highlight">${d.iin}</span>, тұрғылықты мекенжайы: <span class="highlight">${d.address}</span>, тел.: <span class="highlight">${d.phone}</span>, екінші тараптан, бірлесіп «Тараптар» деп аталатын, осы шартты жасасты:</p>
-    <h4>1. Шарттың мәні</h4>
-    <p>1.1. Орындаушы Тапсырыс берушіге: тауарлық бизнес бойынша білім беру қызметтерін (теориялық және практикалық дайындық); тауарлар бар жабық каналға қолжетімділік; фулфилмент қызметін ұсынуға міндеттенеді.</p>
-    <p>1.2. Тапсырыс беруші Шарт талаптарына сәйкес төлем жасауға міндеттенеді.</p>
-    <h4>2. Оқу бағдарламасы</h4>
-    <p>2.1. Бағдарлама: Kaspi дүкені, Wildberries, Ozon, Ebay, Shopify. Жеткізушілер: Қытай, Түркия, Америка. «Жабық чат» каналына қолжетімділік. Чек-листтер, үлгілер, оқытушылардан кеңес.</p>
-    <h4>3. Қызмет көрсету тәртібі</h4>
-    <p>3.1. Оқу онлайн-курс форматында жүргізіледі. 3.2. Жабық каналға қолжетімділік шарт мерзімі бойы беріледі.</p>
-    <h4>4. Төлем тәртібі</h4>
-    <p>4.1. Қызметтердің толық құны: <strong>500 000 теңге</strong>. Жеңілдікпен: <strong>250 000 теңге</strong>. Акциялық баға: <strong>135 000 теңге</strong>. Осы шарт бойынша сома: <strong>${d.amount}</strong>.</p>
-    <p>4.2. Төлем қызмет басталғанға дейін 100% мөлшерінде жүргізіледі.</p>
-    <p>4.3. Төлем тәсілдері: Kaspi QR немесе Kaspi Red (бөліп төлеу).</p>
-    <p>4.5. Төленген қаражат ҚР заңнамасында көзделген жағдайлардан басқа қайтарылмайды.</p>
-    <h4>5. Тараптардың құқықтары мен міндеттері</h4>
-    <p>5.1. Орындаушы қызметтерді толық көлемде көрсетуге, каналға қолжетімділікті қамтамасыз етуге, кеңес беруге міндеттенеді.</p>
-    <p>5.3. Тапсырыс беруші қызметтерді уақытылы төлеуге, платформа ережелерін сақтауға, үшінші тұлғаларға қолжетімділік бермеуге міндеттенеді.</p>
-    <h4>6–9. Жауапкершілік, форс-мажор, мерзім</h4>
-    <p>6.1. Тараптар ҚР заңнамасына сәйкес жауапты. 7.1. Форс-мажор тараптарды жауапкершіліктен босатады. 8.1. Шарт қол қойылған және толық төлем жасалған сәттен күшіне енеді. 9.1. Барлық өзгерістер жазбаша түрде ғана жарамды.</p>
-    <h4>10. Тараптардың реквизиттері</h4>
-    <p><strong>Орындаушы:</strong> ИП Business School Amanat, ИИК: KZ96722C000028394403, БИН: 010512501511, Мекенжай: Қаскелен к., Төле би 39а, Тел: +7 777 121 3963</p>
-    <p><strong>Тапсырыс беруші:</strong> <span class="highlight">${d.fio}</span>, ЖСН: ${d.iin}, Мекенжай: ${d.address}, Тел: ${d.phone}</p>
-  </div>
-</div>
-  `;
-  document.getElementById('contractPreview').innerHTML = html;
-}
-
-// ── PDF GENERATION — html2canvas (кириллица корректна) ──────────────────────
-async function generatePDF() {
-  const { jsPDF } = window.jspdf;
-  const d = formData;
-
-  // Build a hidden print-ready div with all contract content + signature
-  const printDiv = document.createElement('div');
-  printDiv.style.cssText = `
-    position:fixed; left:-9999px; top:0;
-    width:794px; background:#fff; color:#111;
-    font-family:'Manrope','Arial',sans-serif; font-size:11px; line-height:1.7;
-    padding:40px 48px; box-sizing:border-box;
-  `;
-
-  // Collect signature image
-  const offscreen = document.createElement('canvas');
-  offscreen.width = canvas.width;
-  offscreen.height = canvas.height;
-  const offCtx = offscreen.getContext('2d');
-  offCtx.fillStyle = '#ffffff';
-  offCtx.fillRect(0, 0, offscreen.width, offscreen.height);
-  offCtx.drawImage(canvas, 0, 0);
-  const sigData = offscreen.toDataURL('image/jpeg', 0.92);
-
-  printDiv.innerHTML = `
-    <div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #c8a96e;padding-bottom:16px">
-      <div style="font-size:20px;font-weight:700;letter-spacing:0.05em;color:#111">BUSINESS SCHOOL AMANAT</div>
-      <div style="font-size:11px;color:#888;letter-spacing:0.08em;margin-top:4px">ДОГОВОР / ШАРТ — ОКАЗАНИЕ ОБРАЗОВАТЕЛЬНЫХ УСЛУГ / БІЛІМ БЕРУ ҚЫЗМЕТТЕРІ</div>
-      <div style="font-size:10px;color:#aaa;margin-top:4px">г. Алматы / Алматы қ., ${d.date}</div>
-    </div>
-
-    <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
-      <tr>
-        <td style="width:50%;padding-right:16px;vertical-align:top;border-right:1px solid #c8a96e">
-          <div style="font-size:10px;font-weight:700;color:#c8a96e;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">[ RU ] РУССКИЙ</div>
-          <div style="margin-bottom:6px"><strong>Исполнитель:</strong> ИП Business School Amanat, ЕРАЛИЕВ БАКЫТЖАН НУРКЕНУЛЫ, лицензия KZ82UWQ06452512</div>
-          <div style="margin-bottom:6px"><strong>Заказчик:</strong> ${d.fio}</div>
-          <div style="color:#555;font-size:10px">ИИН: ${d.iin} | Адрес: ${d.address}<br>Тел: ${d.phone}${d.email ? ' | Email: '+d.email : ''}</div>
-        </td>
-        <td style="width:50%;padding-left:16px;vertical-align:top">
-          <div style="font-size:10px;font-weight:700;color:#c8a96e;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">[ KZ ] ҚАЗАҚША</div>
-          <div style="margin-bottom:6px"><strong>Орындаушы:</strong> ИП Business School Amanat, ЕРАЛИЕВ БАКЫТЖАН НУРКЕНУЛЫ, лицензия KZ82UWQ06452512</div>
-          <div style="margin-bottom:6px"><strong>Тапсырыс беруші:</strong> ${d.fio}</div>
-          <div style="color:#555;font-size:10px">ЖСН: ${d.iin} | Мекенжай: ${d.address}<br>Тел: ${d.phone}${d.email ? ' | Email: '+d.email : ''}</div>
-        </td>
-      </tr>
-    </table>
-
-    ${[
-      {ru:['1. ПРЕДМЕТ ДОГОВОРА','1.1. Образовательные услуги по товарному бизнесу (теория и практика); доступ в закрытый канал с актуальным ассортиментом товаров; услуга фулфилмента.\n1.2. Заказчик обязуется оплатить услуги в соответствии с условиями Договора.'],
-       kz:['1. ШАРТТЫҢ МӘНІ','1.1. Тауарлық бизнес бойынша білім беру қызметтері (теория және практика); тауарлар бар жабық каналға қолжетімділік; фулфилмент қызметі.\n1.2. Тапсырыс беруші Шарт талаптарына сәйкес төлем жасауға міндеттенеді.']},
-      {ru:['2. ПРОГРАММА ОБУЧЕНИЯ','Kaspi магазин, Wildberries, Ozon, Ebay, Shopify. Поставщики: Китай, Турция, Америка. Доступ к закрытому каналу «Жабык чат», чек-листы, шаблоны, консультации.'],
-       kz:['2. ОҚУ БАҒДАРЛАМАСЫ','Kaspi дүкені, Wildberries, Ozon, Ebay, Shopify. Жеткізушілер: Қытай, Түркия, Америка. «Жабық чат» каналы, чек-листтер, үлгілер, кеңес.']},
-      {ru:['3. ПОРЯДОК ОКАЗАНИЯ УСЛУГ','3.1. Обучение в формате онлайн-курсов.\n3.2. Доступ к закрытому каналу — на весь срок Договора.\n3.4. Заказчик несёт ответственность за корректность предоставленных данных.'],
-       kz:['3. ҚЫЗМЕТ КӨРСЕТУ ТӘРТІБІ','3.1. Оқу онлайн-курс форматында.\n3.2. Жабық каналға қолжетімділік — шарт мерзімі бойы.\n3.4. Тапсырыс беруші деректердің дұрыстығы үшін жауапты.']},
-      {ru:['4. ПОРЯДОК ОПЛАТЫ',`4.1. Толық сома: 500 000 теңге. Жеңілдікпен: 250 000 теңге. Акция: 135 000 теңге.\nОсы шарт бойынша: ${d.amount}.\n4.2. 100% оплата до начала оказания услуг.\n4.3. Kaspi QR или Kaspi Red (рассрочка).\n4.5. Оплаченные средства возврату не подлежат (кроме случаев по зак. РК).`],
-       kz:['4. ТӨЛЕМ ТӘРТІБІ',`4.1. Толық құны: 500 000 теңге. Жеңілдікпен: 250 000 теңге. Акциялық: 135 000 теңге.\nОсы шарт бойынша сома: ${d.amount}.\n4.2. Қызмет басталғанға дейін 100% төлем.\n4.3. Kaspi QR немесе Kaspi Red (бөліп төлеу).\n4.5. Төленген қаражат ҚР заңнамасы бойынша жағдайлардан басқа қайтарылмайды.`]},
-      {ru:['5–9. ПРАВА, ОБЯЗАННОСТИ, ПРОЧЕЕ','5.1. Исполнитель: предоставить услуги, обеспечить доступ к каналу, консультировать.\n5.3. Заказчик: своевременно оплатить, соблюдать правила, не передавать доступ третьим лицам.\n6. Ответственность — по зак. РК. 7. Форс-мажор освобождает стороны. 8. Договор в силе с момента подписания и оплаты. 9. Изменения — письменно.'],
-       kz:['5–9. МІНДЕТТЕР ЖӘНЕ БАСҚА ШАРТТАР','5.1. Орындаушы: қызметтерді толық, каналға қолжетімділік, кеңес беру.\n5.3. Тапсырыс беруші: уақытылы төлеу, ережелерді сақтау, үшінші тұлғаларға бермеу.\n6. Жауапкершілік — ҚР заңнамасы. 7. Форс-мажор босатады. 8. Шарт қол қойылып, төлем жасалған сәттен күшіне енеді. 9. Өзгерістер — жазбаша.']},
-      {ru:['10. РЕКВИЗИТЫ / РЕКВИЗИТТЕР','ИП Business School Amanat | ИИК: KZ96722C000028394403 | БИН: 010512501511\nАдрес: с. Каскелен, Толе би 39а | Тел: +7 777 121 3963 | Лиц: KZ82UWQ06452512'],
-       kz:['10. РЕКВИЗИТТЕР','ИП Business School Amanat | ЖСК: KZ96722C000028394403 | БСН: 010512501511\nМекенжай: Қаскелен к., Төле би 39а | Тел: +7 777 121 3963 | Лиц: KZ82UWQ06452512']}
-    ].map(s => `
-      <table style="width:100%;border-collapse:collapse;margin-bottom:10px;border-top:1px solid #e8e0d0">
-        <tr>
-          <td style="width:50%;padding:8px 16px 8px 0;vertical-align:top;border-right:1px solid #c8a96e">
-            <div style="font-weight:700;color:#333;margin-bottom:4px;font-size:10px">${s.ru[0]}</div>
-            <div style="color:#444;white-space:pre-line;font-size:10px">${s.ru[1]}</div>
-          </td>
-          <td style="width:50%;padding:8px 0 8px 16px;vertical-align:top">
-            <div style="font-weight:700;color:#333;margin-bottom:4px;font-size:10px">${s.kz[0]}</div>
-            <div style="color:#444;white-space:pre-line;font-size:10px">${s.kz[1]}</div>
-          </td>
-        </tr>
-      </table>
-    `).join('')}
-
-    <div style="border-top:2px solid #c8a96e;margin-top:20px;padding-top:16px">
-      <div style="font-weight:700;font-size:11px;margin-bottom:16px">ПОДПИСИ СТОРОН / ТАРАПТАРДЫҢ ҚОЛДАРЫ</div>
-      <table style="width:100%;border-collapse:collapse">
-        <tr>
-          <td style="width:50%;padding-right:20px;vertical-align:top;border-right:1px solid #c8a96e">
-            <div style="font-size:10px;color:#555;margin-bottom:4px">Орындаушы / Исполнитель:</div>
-            <div style="font-weight:600;margin-bottom:2px">ИП Business School Amanat</div>
-            <div style="font-size:10px;margin-bottom:20px">Ералиев Бакытжан Нуркенулы</div>
-            <div style="border-bottom:1px solid #999;width:200px;margin-bottom:4px"></div>
-            <div style="font-size:9px;color:#aaa">қол қою / подпись</div>
-          </td>
-          <td style="width:50%;padding-left:20px;vertical-align:top">
-            <div style="font-size:10px;color:#555;margin-bottom:4px">Тапсырыс беруші / Заказчик:</div>
-            <div style="font-weight:600;margin-bottom:2px">${d.fio}</div>
-            <div style="font-size:10px;margin-bottom:4px">ИИН / ЖСН: ${d.iin}</div>
-            <img src="${sigData}" style="height:60px;max-width:220px;display:block;margin-bottom:0">
-            <div style="border-bottom:1px solid #999;width:200px;margin-bottom:4px"></div>
-            <div style="font-size:9px;color:#aaa">қол қою / подпись</div>
-          </td>
-        </tr>
-      </table>
-      <div style="text-align:center;font-size:9px;color:#bbb;margin-top:20px;border-top:1px solid #eee;padding-top:8px">
-        Business School Amanat &nbsp;|&nbsp; +7 777 121 3963 &nbsp;|&nbsp; Дата / Күні: ${d.date}
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(printDiv);
-
-  try {
-    const canvas2 = await html2canvas(printDiv, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      logging: false
-    });
-    document.body.removeChild(printDiv);
-
-    const imgData = canvas2.toDataURL('image/jpeg', 0.92);
-    const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
-    const W = 210, H = 297;
-    const imgW = W;
-    const imgH = canvas2.height * (W / canvas2.width);
-
-    if (imgH <= H) {
-      doc.addImage(imgData, 'JPEG', 0, 0, imgW, imgH);
-    } else {
-      // Multi-page
-      let yPos = 0;
-      while (yPos < imgH) {
-        if (yPos > 0) doc.addPage();
-        doc.addImage(imgData, 'JPEG', 0, -yPos, imgW, imgH);
-        yPos += H;
-      }
-    }
-    return doc;
-  } catch(e) {
-    document.body.removeChild(printDiv);
-    throw e;
-  }
-}
-
-// ── LEGACY stub (kept for compatibility) ─────────────────────────────────────
-async function _generatePDF_OLD_UNUSED() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
-  const d = formData;
-  const W = 210, ml = 12, mr = 12, lw = W - ml - mr;
-  const col = lw / 2 - 4;
-  const midX = ml + col + 8;
-
-  function addText(text, x, y, opts={}) {
-    const { size=9, bold=false, color=[30,30,30], align='left', maxWidth=col } = opts;
-    doc.setFontSize(size);
-    doc.setFont('helvetica', bold ? 'bold' : 'normal');
-    doc.setTextColor(...color);
-    const lines = doc.splitTextToSize(text, maxWidth);
-    doc.text(lines, x, y, { align });
-    return lines.length * (size * 0.352 + 1.4);
-  }
-  function lineH(y, x1=ml, x2=W-mr) {
-    doc.setDrawColor(200,169,110); doc.setLineWidth(0.3);
-    doc.line(x1, y, x2, y);
-  }
-  function lineV(x, y1, y2) {
-    doc.setDrawColor(200,169,110,0.5); doc.setLineWidth(0.2);
-    doc.line(x, y1, x, y2);
-  }
-
-  // ── Header ──
-  doc.setFillColor(13,13,13);
-  doc.rect(0,0,W,42,'F');
-  doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.setTextColor(200,169,110);
-  doc.text('BUSINESS SCHOOL AMANAT', W/2, 14, {align:'center'});
-  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(180,170,150);
-  doc.text('ДОГОВОР / ШАРТ — ОКАЗАНИЕ ОБРАЗОВАТЕЛЬНЫХ УСЛУГ / БІЛІМ БЕРУ ҚЫЗМЕТТЕРІ', W/2, 22, {align:'center'});
-  doc.setFontSize(8); doc.setTextColor(140,130,110);
-  doc.text(`г. Алматы / Алматы қ.,  ${d.date}`, W/2, 30, {align:'center'});
-
-  let y = 50;
-  lineH(y); y += 5;
-
-  // Column headers
-  doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(200,169,110);
-  doc.text('[ RU ]  РУССКИЙ', ml, y); doc.text('[ KZ ]  КАЗАКША', midX, y);
-  y += 5; lineH(y); y += 5;
-
-  // ── Parties ──
-  let ly = y, ry = y;
-  ly += addText('Исполнитель:', ml, ly, {bold:true, size:9}) + 0.5;
-  ly += addText('ИП Business School Amanat, ЕРАЛИЕВ Б.Н., лицензия KZ82UWQ06452512', ml, ly, {size:8, color:[50,50,50]}) + 2;
-  ly += addText('Заказчик:', ml, ly, {bold:true, size:9}) + 0.5;
-  ly += addText(`${d.fio}`, ml, ly, {size:9, bold:true, color:[20,20,100]}) + 0.5;
-  ly += addText(`ИИН: ${d.iin}`, ml, ly, {size:8, color:[50,50,50]}) + 0.5;
-  ly += addText(`Адрес: ${d.address}`, ml, ly, {size:8, color:[50,50,50]}) + 0.5;
-  ly += addText(`Тел: ${d.phone}${d.email ? ' | Email: '+d.email : ''}`, ml, ly, {size:8, color:[50,50,50]}) + 3;
-
-  ry += addText('Орындаушы:', midX, ry, {bold:true, size:9}) + 0.5;
-  ry += addText('ИП Business School Amanat, ЕРАЛИЕВ Б.Н., лицензия KZ82UWQ06452512', midX, ry, {size:8, color:[50,50,50]}) + 2;
-  ry += addText('Тапсырыс беруші:', midX, ry, {bold:true, size:9}) + 0.5;
-  ry += addText(`${d.fio}`, midX, ry, {size:9, bold:true, color:[20,20,100]}) + 0.5;
-  ry += addText(`ЖСН: ${d.iin}`, midX, ry, {size:8, color:[50,50,50]}) + 0.5;
-  ry += addText(`Мекенжай: ${d.address}`, midX, ry, {size:8, color:[50,50,50]}) + 0.5;
-  ry += addText(`Тел: ${d.phone}${d.email ? ' | Email: '+d.email : ''}`, midX, ry, {size:8, color:[50,50,50]}) + 3;
-
-  y = Math.max(ly, ry);
-  lineV(midX - 4, 55, y);
-  lineH(y); y += 5;
-
-  // ── Sections bilingual ──
-  const sections = [
-    {
-      ru: ['1. ПРЕДМЕТ ДОГОВОРА',
-           '1.1. Образовательные услуги по товарному бизнесу (теория и практика); доступ в закрытый канал с актуальным ассортиментом товаров; услуга фулфилмента.\n1.2. Заказчик обязуется оплатить услуги в соответствии с условиями Договора.'],
-      kz: ['1. ШАРТТЫҢ МӘНІ',
-           '1.1. Тауарлық бизнес бойынша білім беру қызметтері (теория және практика); тауарлар бар жабық каналға қолжетімділік; фулфилмент қызметі.\n1.2. Тапсырыс беруші Шарт талаптарына сәйкес төлем жасауға міндеттенеді.']
-    },
-    {
-      ru: ['2. ПРОГРАММА ОБУЧЕНИЯ',
-           'Kaspi магазин, Wildberries, Ozon, Ebay, Shopify. Поставщики: Китай, Турция, Америка. Доступ к закрытому каналу «Жабык чат», чек-листы, шаблоны, консультации.'],
-      kz: ['2. ОҚУ БАҒДАРЛАМАСЫ',
-           'Kaspi дүкені, Wildberries, Ozon, Ebay, Shopify. Жеткізушілер: Қытай, Түркия, Америка. «Жабық чат» каналы, чек-листтер, үлгілер, кеңес.']
-    },
-    {
-      ru: ['3. ПОРЯДОК ОКАЗАНИЯ УСЛУГ',
-           '3.1. Обучение в формате онлайн-курсов.\n3.2. Доступ к закрытому каналу — на весь срок Договора.\n3.4. Заказчик несёт ответственность за корректность предоставленных данных.'],
-      kz: ['3. ҚЫЗМЕТ КӨРСЕТУ ТӘРТІБІ',
-           '3.1. Оқу онлайн-курс форматында.\n3.2. Жабық каналға қолжетімділік — шарт мерзімі бойы.\n3.4. Тапсырыс беруші деректердің дұрыстығы үшін жауапты.']
-    },
-    {
-      ru: ['4. ПОРЯДОК ОПЛАТЫ',
-           `4.1. Полная стоимость: 500 000 тенге. Со скидкой: 250 000 тенге. Акционная: 135 000 тенге.\nСумма по настоящему договору: ${d.amount}.\n4.2. Оплата 100% до начала оказания услуг.\n4.3. Kaspi QR или Kaspi Red (рассрочка).\n4.5. Средства возврату не подлежат, за исключением случаев по законодательству РК.`],
-      kz: ['4. ТӨЛЕМ ТӘРТІБІ',
-           `4.1. Толық құны: 500 000 теңге. Жеңілдікпен: 250 000 теңге. Акциялық: 135 000 теңге.\nОсы шарт бойынша сома: ${d.amount}.\n4.2. Қызмет басталғанға дейін 100% төлем.\n4.3. Kaspi QR немесе Kaspi Red (бөліп төлеу).\n4.5. Төленген қаражат ҚР заңнамасы бойынша жағдайлардан басқа қайтарылмайды.`]
-    },
-    {
-      ru: ['5. ПРАВА И ОБЯЗАННОСТИ',
-           '5.1. Исполнитель: предоставить услуги в полном объёме, обеспечить доступ к каналу, консультировать.\n5.3. Заказчик: своевременно оплатить, соблюдать правила платформы, не передавать доступ третьим лицам.'],
-      kz: ['5. ТАРАПТАРДЫҢ МІНДЕТТЕРІ',
-           '5.1. Орындаушы: қызметтерді толық көлемде, каналға қолжетімділікті қамтамасыз ету, кеңес беру.\n5.3. Тапсырыс беруші: уақытылы төлеу, платформа ережелерін сақтау, үшінші тұлғаларға бермеу.']
-    },
-    {
-      ru: ['6–9. ПРОЧИЕ УСЛОВИЯ',
-           '6.1. Ответственность — по законодательству РК. 7.1. Форс-мажор освобождает стороны от ответственности. 8.1. Договор вступает в силу после подписания и полной оплаты. 9.1. Изменения — только в письменной форме.'],
-      kz: ['6–9. БАСҚА ШАРТТАР',
-           '6.1. Жауапкершілік — ҚР заңнамасы бойынша. 7.1. Форс-мажор тараптарды жауапкершіліктен босатады. 8.1. Шарт қол қойылып, толық төлем жасалған сәттен күшіне енеді. 9.1. Өзгерістер — жазбаша түрде ғана.']
-    }
-  ];
-
-  for (const sec of sections) {
-    const startY = y;
-    let colLY = y, colRY = y;
-    colLY += addText(sec.ru[0], ml, colLY, {bold:true, size:9, color:[20,20,80]}) + 1.5;
-    colLY += addText(sec.ru[1], ml, colLY, {size:8, color:[50,50,50]}) + 4;
-    colRY += addText(sec.kz[0], midX, colRY, {bold:true, size:9, color:[10,60,10]}) + 1.5;
-    colRY += addText(sec.kz[1], midX, colRY, {size:8, color:[50,50,50]}) + 4;
-    y = Math.max(colLY, colRY);
-    lineV(midX - 4, startY, y);
-    if (y > 255) {
-      doc.addPage(); y = 20;
-      lineH(y); y += 5;
-      doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(200,169,110);
-      doc.text('[ RU ]  РУССКИЙ', ml, y); doc.text('[ KZ ]  КАЗАКША', midX, y);
-      y += 5; lineH(y); y += 5;
-    }
-  }
-
-  // ── Requisites ──
-  if (y > 225) { doc.addPage(); y = 20; }
-  lineH(y); y += 5;
-  let rqLY = y, rqRY = y;
-  rqLY += addText('10. РЕКВИЗИТЫ / РЕКВИЗИТТЕР', ml, rqLY, {bold:true, size:9}) + 2;
-  rqLY += addText('Исполнитель / Орындаушы:', ml, rqLY, {bold:true, size:9}) + 1;
-  ['ИП Business School Amanat','ИИК: KZ96722C000028394403','БИН: 010512501511','Адрес: с. Каскелен, Толе би 39а','Тел: +7 777 121 3963'].forEach(l => {
-    rqLY += addText(l, ml, rqLY, {size:8, color:[50,50,50]}) + 0.5;
-  });
-  rqLY += 2;
-  rqLY += addText('Заказчик / Тапсырыс беруші:', ml, rqLY, {bold:true, size:9}) + 1;
-  [d.fio, `ИИН / ЖСН: ${d.iin}`, `Адрес / Мекенжай: ${d.address}`, `Тел: ${d.phone}`].forEach(l => {
-    rqLY += addText(l, ml, rqLY, {size:8, color:[50,50,50]}) + 0.5;
-  });
-
-  rqRY = y;
-  rqRY += addText(' ', midX, rqRY, {size:9}) + 2; // align with left col header
-  rqRY += addText(' ', midX, rqRY, {size:9}) + 1; // spacer
-  ['ИП Business School Amanat','ИИК: KZ96722C000028394403','БИН: 010512501511','Мекенжай: Қаскелен к., Төле би 39а','Тел: +7 777 121 3963'].forEach(l => {
-    rqRY += addText(l, midX, rqRY, {size:8, color:[50,50,50]}) + 0.5;
-  });
-  rqRY += 2;
-  rqRY += addText(' ', midX, rqRY, {size:9}) + 1;
-  [d.fio, `ЖСН: ${d.iin}`, `Мекенжай: ${d.address}`, `Тел: ${d.phone}`].forEach(l => {
-    rqRY += addText(l, midX, rqRY, {size:8, color:[50,50,50]}) + 0.5;
-  });
-
-  const rqStartY = y;
-  y = Math.max(rqLY, rqRY) + 8;
-  lineV(midX - 4, rqStartY, y);
-
-  // ── Signatures ──
-  if (y > 230) { doc.addPage(); y = 20; }
-  lineH(y); y += 7;
-  doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(30,30,30);
-  doc.text('ПОДПИСИ СТОРОН / ТАРАПТАРДЫН КОЛДАРЫ', ml, y); y += 12;
-
-  const sigY = y;
-
-  // LEFT — Executor
-  doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(60,60,60);
-  doc.text('Орындаушы / Исполнитель:', ml, sigY);
-  doc.text('ИП Business School Amanat', ml, sigY + 6);
-  doc.text('Ералиев Бакытжан Нуркенулы', ml, sigY + 12);
-  // Signature line for executor
-  doc.setDrawColor(100,100,100); doc.setLineWidth(0.4);
-  doc.line(ml, sigY + 26, ml + 78, sigY + 26);
-  doc.setFontSize(7); doc.setTextColor(150,150,150);
-  doc.text('кол кою / подпись', ml, sigY + 31);
-
-  // RIGHT — Customer
-  doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(60,60,60);
-  doc.text('Тапсырыс беруші / Заказчик:', midX, sigY);
-  doc.text(d.fio, midX, sigY + 6);
-
-  if (!isSignatureEmpty()) {
-    // Render signature on an offscreen canvas with WHITE background to avoid transparency issues
-    const offscreen = document.createElement('canvas');
-    offscreen.width = canvas.width;
-    offscreen.height = canvas.height;
-    const offCtx = offscreen.getContext('2d');
-    offCtx.fillStyle = '#ffffff';
-    offCtx.fillRect(0, 0, offscreen.width, offscreen.height);
-    offCtx.drawImage(canvas, 0, 0);
-    const sigData = offscreen.toDataURL('image/jpeg', 0.92);
-    // Place signature image below the name, above the line
-    doc.addImage(sigData, 'JPEG', midX, sigY + 9, 78, 16);
-    doc.setDrawColor(100,100,100); doc.setLineWidth(0.4);
-    doc.line(midX, sigY + 26, midX + 78, sigY + 26);
-    doc.setFontSize(7); doc.setTextColor(150,150,150);
-    doc.text('кол кою / подпись', midX, sigY + 31);
-  } else {
-    doc.setDrawColor(100,100,100); doc.setLineWidth(0.4);
-    doc.line(midX, sigY + 26, midX + 78, sigY + 26);
-    doc.setFontSize(7); doc.setTextColor(150,150,150);
-    doc.text('кол кою / подпись', midX, sigY + 31);
-  }
-
-  // Divider between columns
-  lineV(midX - 4, sigY - 4, sigY + 34);
-
-  // Footer
-  const totalPages = doc.internal.getNumberOfPages();
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i);
-    doc.setFontSize(7); doc.setTextColor(160,160,160);
-    doc.text(`Бет ${i} / ${totalPages}  |  Business School Amanat  |  +7 777 121 3963`, W/2, 290, {align:'center'});
-  }
-
-  return doc;
-}
-
-// ── SUBMIT ──────────────────────────────────────────────────────────────────
-async function submitContract() {
-  if (isSignatureEmpty()) {
-    alert('Пожалуйста, поставьте подпись перед отправкой. / Жіберу алдында қол қойыңыз.');
+  const errEl = document.getElementById('formError');
+  if (!fio)  { errEl.textContent = 'Введите ФИО / Т.А.Ә.'; return; }
+  if (!iin || iin.length < 12 || !/^\d+$/.test(iin)) {
+    errEl.textContent = 'Введите корректный ИИН — 12 цифр / ЖСН';
     return;
   }
-  const btn = document.getElementById('btnSubmit');
-  btn.innerHTML = '<span class="loading"></span> Обрабатываем...';
-  btn.disabled = true;
+  errEl.textContent = '';
 
-  signatureDataUrl = canvas.toDataURL('image/png');
+  formData = { fio, iin, passport, address, phone, email, amount };
 
-  let pdf;
-  try { pdf = await generatePDF(); } catch(e) { console.error(e); }
+  const today = new Date().toLocaleDateString('ru-RU');
+  document.getElementById('contractView').innerHTML = buildContractHTML(formData, today);
 
-  const fileName = `Договор_${formData.fio.replace(/ /g,'_')}_Amanat.pdf`;
-  if (pdf) {
-    pdf.save(fileName);
-    pdfBlob = pdf.output('blob');
-  }
-
-  setStep('done');
-
-  const statuses = [];
-  const tgResult = await sendTelegram(fileName);
-  statuses.push({ icon:'✈️', text:'Telegram администратору', ok: tgResult });
-  const gsResult = await sendGoogleSheets();
-  statuses.push({ icon:'📊', text:'Запись в Google Таблицу', ok: gsResult });
-  statuses.push({ icon:'📄', text:'PDF договор скачан на устройство', ok: true });
-  renderStatuses(statuses);
+  document.getElementById('stepForm').style.display     = 'none';
+  document.getElementById('stepContract').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function renderStatuses(list) {
-  const html = list.map(s => `
-    <div class="status-item">
-      <span class="status-icon">${s.icon}</span>
-      <span class="status-text">${s.text}</span>
-      <span class="status-badge ${s.ok === true ? 'badge-ok' : s.ok === false ? 'badge-err' : 'badge-pending'}">
-        ${s.ok === true ? '✓ Готово' : s.ok === false ? '✗ Ошибка' : '⏳ Ожидание'}
-      </span>
+// ─── STEP 2 → 1: BACK ────────────────────────────────────
+function goBack() {
+  document.getElementById('stepContract').style.display = 'none';
+  document.getElementById('stepForm').style.display     = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── STEP 2 → 3: SIGN ────────────────────────────────────
+function goToSign() {
+  document.getElementById('stepContract').style.display = 'none';
+  document.getElementById('stepSign').style.display     = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Инициализируем canvas ТОЛЬКО когда он уже виден в DOM
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    sigInitialized = false;
+    initSig();
+  }));
+}
+
+// ─── BUILD CONTRACT HTML (для предпросмотра) ──────────────
+function buildContractHTML(d, date) {
+  const contractNo = 'BSA-' + d.iin.slice(-4) + '-' + new Date().getFullYear();
+
+  return `
+    <h2>ДОГОВОР ОБ ОКАЗАНИИ УСЛУГ / ҚЫЗМЕТ КӨРСЕТУ ШАРТЫ</h2>
+    <div class="sub">Business School Amanat · № ${contractNo} · ${date}</div>
+
+    <div class="ct-parties">
+      <div class="ct-cols">
+        <div class="ct-col">
+          <div class="ct-col-head">Русский</div>
+          <div class="ct-info-row"><span class="ct-info-label">Исполнитель:</span><span class="ct-info-val">ИП Business School Amanat</span></div>
+          <div class="ct-info-row"><span class="ct-info-label">БИН:</span><span class="ct-info-val">010512501511</span></div>
+          <div class="ct-info-row"><span class="ct-info-label">Заказчик:</span><span class="ct-info-val">${d.fio}</span></div>
+          <div class="ct-info-row"><span class="ct-info-label">ИИН:</span><span class="ct-info-val">${d.iin}</span></div>
+          ${d.passport ? `<div class="ct-info-row"><span class="ct-info-label">Паспорт:</span><span class="ct-info-val">${d.passport}</span></div>` : ''}
+          ${d.address  ? `<div class="ct-info-row"><span class="ct-info-label">Адрес:</span><span class="ct-info-val">${d.address}</span></div>` : ''}
+          ${d.phone    ? `<div class="ct-info-row"><span class="ct-info-label">Телефон:</span><span class="ct-info-val">${d.phone}</span></div>` : ''}
+          ${d.email    ? `<div class="ct-info-row"><span class="ct-info-label">Email:</span><span class="ct-info-val">${d.email}</span></div>` : ''}
+          <div class="ct-info-row"><span class="ct-info-label">Стоимость:</span><span class="ct-info-val">${d.amount}</span></div>
+        </div>
+        <div class="ct-col">
+          <div class="ct-col-head">Қазақша</div>
+          <div class="ct-info-row"><span class="ct-info-label">Орындаушы:</span><span class="ct-info-val">ИП Business School Amanat</span></div>
+          <div class="ct-info-row"><span class="ct-info-label">БСН:</span><span class="ct-info-val">010512501511</span></div>
+          <div class="ct-info-row"><span class="ct-info-label">Тапсырыс беруші:</span><span class="ct-info-val">${d.fio}</span></div>
+          <div class="ct-info-row"><span class="ct-info-label">ЖСН:</span><span class="ct-info-val">${d.iin}</span></div>
+          ${d.passport ? `<div class="ct-info-row"><span class="ct-info-label">Төлқұжат:</span><span class="ct-info-val">${d.passport}</span></div>` : ''}
+          ${d.address  ? `<div class="ct-info-row"><span class="ct-info-label">Мекенжай:</span><span class="ct-info-val">${d.address}</span></div>` : ''}
+          ${d.phone    ? `<div class="ct-info-row"><span class="ct-info-label">Телефон:</span><span class="ct-info-val">${d.phone}</span></div>` : ''}
+          ${d.email    ? `<div class="ct-info-row"><span class="ct-info-label">Email:</span><span class="ct-info-val">${d.email}</span></div>` : ''}
+          <div class="ct-info-row"><span class="ct-info-label">Сомасы:</span><span class="ct-info-val">${d.amount}</span></div>
+        </div>
+      </div>
     </div>
-  `).join('');
-  document.getElementById('statusList').innerHTML = html;
+
+    <hr class="ct-hr">
+
+    <div class="ct-section-title">1. Предмет Договора / Шарттың мәні</div>
+    <p class="ct-p">1.1. Исполнитель обязуется предоставить Заказчику следующие услуги: (а) образовательные услуги по обучению товарному бизнесу, включающие теоретическую и практическую подготовку; (б) доступ в закрытый Telegram-канал с актуальным ассортиментом товаров («Жабық чат»); (в) услугу фулфилмента — организацию приёмки, упаковки и доставки товаров до пункта приёма заказов маркетплейса (при наличии технической возможности и по отдельному согласованию).</p>
+    <p class="ct-p">1.2. Заказчик обязуется принять и оплатить оказанные услуги в соответствии с условиями настоящего Договора.</p>
+
+    <div class="ct-section-title">2. Программа обучения / Оқу бағдарламасы</div>
+    <p class="ct-p">2.1. Программа включает следующие модули: Kaspi Магазин, Wildberries, Ozon, eBay, Shopify; работа с поставщиками из Китая, Турции, США; доступ к закрытому каналу с актуальными товарами; чек-листы, шаблоны, инструкции; консультации и обратная связь от преподавателей.</p>
+    <p class="ct-p">2.2. Исполнитель вправе корректировать состав и содержание программы в целях улучшения качества обучения, предварительно уведомив Заказчика.</p>
+
+    <div class="ct-section-title">3. Порядок и сроки оказания услуг / Қызмет тәртібі</div>
+    <p class="ct-p">3.1. Обучение проводится дистанционно (онлайн) посредством интернета. Курс включает видеолекции, тематические материалы и практические задания.</p>
+    <p class="ct-p">3.2. Доступ в закрытый канал с товарами предоставляется с момента зачисления оплаты и действует до окончания срока обучения.</p>
+    <p class="ct-p">3.3. Срок обучения: с момента активации доступа по согласованию Сторон, но не позднее 5 (пяти) рабочих дней с даты поступления оплаты.</p>
+    <p class="ct-p">3.4. Заказчик несёт ответственность за предоставление корректных данных для доступа к платформе. При указании неверных данных Исполнитель не несёт ответственности за непредоставление доступа.</p>
+
+    <div class="ct-section-title">4. Стоимость и порядок оплаты / Төлем тәртібі</div>
+    <p class="ct-p">4.1. Стоимость услуг по настоящему договору составляет <strong>${d.amount}</strong>.</p>
+    <p class="ct-p">4.2. Оплата осуществляется единовременно в размере 100% до начала оказания услуг.</p>
+    <p class="ct-p">4.3. Допустимые способы оплаты: перевод на расчётный счёт Исполнителя через Kaspi QR; рассрочка через сервис Kaspi Red.</p>
+    <p class="ct-p">4.4. Обязательства Заказчика по оплате считаются исполненными с момента поступления денежных средств на расчётный счёт Исполнителя.</p>
+    <div class="ct-notice">⚠ 4.5. Денежные средства, уплаченные Заказчиком, возврату не подлежат, за исключением случаев, прямо предусмотренных законодательством Республики Казахстан (ст. 668 ГК РК и специальными нормами о защите прав потребителей). Для инициирования возврата в исключительных случаях Заказчик обязан направить Исполнителю письменное заявление.</div>
+
+    <div class="ct-section-title">5. Права и обязанности сторон / Тараптардың құқықтары мен міндеттері</div>
+    <p class="ct-p">5.1. Исполнитель обязан: предоставить услуги в полном объёме согласно программе; обеспечить доступ к закрытому каналу; оказывать консультационную поддержку в рамках курса.</p>
+    <p class="ct-p">5.2. Исполнитель вправе: приостановить или прекратить доступ при нарушении Заказчиком условий Договора (в том числе при передаче доступа третьим лицам); отказать в возврате оплаты в случаях, предусмотренных п. 4.5.</p>
+    <p class="ct-p">5.3. Заказчик обязан: своевременно и в полном объёме оплатить услуги; соблюдать правила пользования образовательной платформой; не передавать доступ к материалам курса и закрытому каналу третьим лицам.</p>
+    <p class="ct-p">5.4. Заказчик вправе: получить услуги в объёме, предусмотренном Договором; требовать разъяснений по вопросам программы обучения.</p>
+
+    <div class="ct-section-title">6. Конфиденциальность / Құпиялылық</div>
+    <p class="ct-p">6.1. Заказчик обязуется не разглашать третьим лицам содержание учебных материалов, составляющих коммерческую ценность Исполнителя, в течение срока действия Договора и 2 (двух) лет после его прекращения.</p>
+    <p class="ct-p">6.2. Персональные данные Заказчика обрабатываются Исполнителем исключительно в целях исполнения настоящего Договора в соответствии с законодательством РК о персональных данных.</p>
+
+    <div class="ct-section-title">7. Ответственность сторон / Тараптардың жауапкершілігі</div>
+    <p class="ct-p">7.1. За нарушение условий Договора стороны несут ответственность в соответствии с законодательством Республики Казахстан.</p>
+    <p class="ct-p">7.2. Исполнитель не несёт ответственности за невозможность оказания услуг по вине Заказчика, в том числе вследствие предоставления некорректных данных или отсутствия у Заказчика технических средств для участия в обучении.</p>
+
+    <div class="ct-section-title">8. Форс-мажор / Форс-мажор</div>
+    <p class="ct-p">8.1. Стороны освобождаются от ответственности за частичное или полное неисполнение обязательств, если оно явилось следствием обстоятельств непреодолимой силы (стихийные бедствия, военные действия, решения государственных органов и т.п.), подтверждённых в установленном порядке. Сторона, для которой наступили такие обстоятельства, обязана незамедлительно уведомить другую Сторону.</p>
+
+    <div class="ct-section-title">9. Срок действия и расторжение / Шарттың мерзімі</div>
+    <p class="ct-p">9.1. Договор вступает в силу с момента его подписания Сторонами и полного поступления оплаты на счёт Исполнителя.</p>
+    <p class="ct-p">9.2. Договор прекращает действие после выполнения Сторонами всех обязательств по нему.</p>
+    <p class="ct-p">9.3. Досрочное расторжение возможно по соглашению Сторон, оформленному письменно, либо в судебном порядке в соответствии с законодательством РК.</p>
+
+    <div class="ct-section-title">10. Прочие условия / Басқа шарттар</div>
+    <p class="ct-p">10.1. Все изменения и дополнения к Договору действительны только при их оформлении в письменной форме и подписании обеими Сторонами.</p>
+    <p class="ct-p">10.2. Споры, возникающие при исполнении Договора, разрешаются путём переговоров. При недостижении согласия в течение 30 (тридцати) дней спор передаётся на рассмотрение суда по месту нахождения Исполнителя.</p>
+    <p class="ct-p">10.3. Настоящий Договор составлен на русском и казахском языках, оба текста имеют равную юридическую силу. При расхождении в толковании приоритет имеет русскоязычная версия.</p>
+
+    <hr class="ct-hr">
+
+    <div class="ct-section-title">11. Реквизиты Исполнителя / Орындаушы реквизиттері</div>
+    <p class="ct-p"><strong>Наименование:</strong> ИП Business School Amanat &nbsp;|&nbsp; <strong>БИН:</strong> 010512501511</p>
+    <p class="ct-p"><strong>ИИК:</strong> KZ96722C000028394403 &nbsp;|&nbsp; <strong>Банк:</strong> Kaspi Bank</p>
+    <p class="ct-p"><strong>Адрес:</strong> Республика Казахстан, Алматинская обл., с. Каскелен, ул. Толе би, 39а, индекс 050000</p>
+    <p class="ct-p"><strong>Тел.:</strong> +7 777 121 3963 &nbsp;|&nbsp; <strong>Лицензия:</strong> KZ82UWQ06452512</p>
+  `;
 }
 
-async function sendTelegram(fileName) {
-  if (CONFIG.TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN') return null;
-  try {
-    const d = formData;
-    const text = `📋 *Новый договор подписан!*\n\n👤 *ФИО:* ${d.fio}\n🔢 *ИИН:* ${d.iin}\n📍 *Адрес:* ${d.address}\n📞 *Телефон:* ${d.phone}${d.email ? '\n✉️ *Email:* '+d.email : ''}\n💰 *Сумма:* ${d.amount}\n📅 *Дата:* ${d.date}\n🖊️ *Подпись получена*`;
-    const msgRes = await fetch(`https://api.telegram.org/bot${CONFIG.TELEGRAM_BOT_TOKEN}/sendMessage`, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ chat_id: CONFIG.TELEGRAM_CHAT_ID, text, parse_mode:'Markdown' })
-    });
-    if (pdfBlob) {
-      const fd = new FormData();
-      fd.append('chat_id', CONFIG.TELEGRAM_CHAT_ID);
-      fd.append('document', pdfBlob, fileName);
-      fd.append('caption', `📄 Договор: ${d.fio}`);
-      await fetch(`https://api.telegram.org/bot${CONFIG.TELEGRAM_BOT_TOKEN}/sendDocument`, { method:'POST', body:fd });
-    }
-    return (await msgRes.json()).ok === true;
-  } catch(e) { console.error('Telegram error:', e); return false; }
+// ─── SIGNATURE ───────────────────────────────────────────
+// ИСПРАВЛЕНО: canvas и ctx НЕ читаются при загрузке страницы
+function getSigCanvas() { return document.getElementById('sigCanvas'); }
+
+function initSig() {
+  if (sigInitialized) return;
+  const canvas = getSigCanvas();
+  const rect   = canvas.getBoundingClientRect();
+  if (rect.width === 0) return;
+  const r = window.devicePixelRatio || 1;
+  canvas.width  = rect.width  * r;
+  canvas.height = rect.height * r;
+  sigCtx = canvas.getContext('2d');
+  sigCtx.setTransform(1, 0, 0, 1, 0, 0);
+  sigCtx.scale(r, r);
+  sigCtx.lineWidth   = 2.5;
+  sigCtx.lineCap     = 'round';
+  sigCtx.lineJoin    = 'round';
+  sigCtx.strokeStyle = '#111';
+  sigInitialized = true;
 }
 
-async function sendGoogleSheets() {
-  if (CONFIG.GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_SCRIPT_URL') return null;
-  try {
-    const d = formData;
-    const payload = {
-      fio: d.fio, iin: d.iin,
-      address: d.address, phone: d.phone, email: d.email,
-      amount: d.amount, date: d.date,
-      timestamp: new Date().toISOString()
-    };
-    const res = await fetch(CONFIG.GOOGLE_SCRIPT_URL, { method:'POST', body: JSON.stringify(payload) });
-    return res.ok;
-  } catch(e) { console.error('Sheets error:', e); return false; }
+function getPos(e) {
+  const canvas = getSigCanvas();
+  const rect   = canvas.getBoundingClientRect();
+  const src    = e.touches ? e.touches[0] : e;
+  return { x: src.clientX - rect.left, y: src.clientY - rect.top };
 }
 
-function downloadAgain() {
-  if (!formData.fio) return;
-  generatePDF().then(pdf => {
-    pdf.save(`Договор_${formData.fio.replace(/ /g,'_')}_Amanat.pdf`);
+function onSigStart(e) {
+  initSig();
+  if (!sigCtx) return;
+  drawing = true;
+  document.getElementById('canvasPlaceholder').style.display = 'none';
+  const p = getPos(e);
+  sigCtx.beginPath();
+  sigCtx.moveTo(p.x, p.y);
+}
+function onSigMove(e) {
+  if (!drawing || !sigCtx) return;
+  if (e.cancelable) e.preventDefault();
+  const p = getPos(e);
+  sigCtx.lineTo(p.x, p.y);
+  sigCtx.stroke();
+}
+function onSigEnd() { drawing = false; }
+
+// ИСПРАВЛЕНО: listeners навешиваются через функцию, вызываемую при открытии шага
+function bindSigListeners() {
+  const canvas = getSigCanvas();
+  canvas.removeEventListener('mousedown',  onSigStart);
+  canvas.removeEventListener('touchstart', onSigStart);
+  canvas.removeEventListener('mousemove',  onSigMove);
+  canvas.removeEventListener('touchmove',  onSigMove);
+  canvas.removeEventListener('mouseup',    onSigEnd);
+  canvas.removeEventListener('mouseleave', onSigEnd);
+  canvas.removeEventListener('touchend',   onSigEnd);
+
+  canvas.addEventListener('mousedown',  onSigStart);
+  canvas.addEventListener('touchstart', onSigStart, { passive: false }); // ИСПРАВЛЕНО: passive:false везде
+  canvas.addEventListener('mousemove',  onSigMove);
+  canvas.addEventListener('touchmove',  onSigMove,  { passive: false });
+  canvas.addEventListener('mouseup',    onSigEnd);
+  canvas.addEventListener('mouseleave', onSigEnd);
+  canvas.addEventListener('touchend',   onSigEnd);
+}
+
+// Перепишем goToSign чтобы он вызывал bindSigListeners
+function goToSign() {
+  document.getElementById('stepContract').style.display = 'none';
+  document.getElementById('stepSign').style.display     = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    sigInitialized = false;
+    sigCtx = null;
+    bindSigListeners();
+    initSig();
+  }));
+}
+
+function clearSig() {
+  if (!sigInitialized || !sigCtx) return;
+  const canvas = getSigCanvas();
+  sigCtx.clearRect(0, 0, canvas.width, canvas.height);
+  document.getElementById('canvasPlaceholder').style.display = 'block';
+}
+
+function hasSig() {
+  if (!sigInitialized || !sigCtx) return false;
+  const canvas = getSigCanvas();
+  const imgData = sigCtx.getImageData(0, 0, canvas.width, canvas.height).data;
+  for (let i = 3; i < imgData.length; i += 4) {
+    if (imgData[i] > 15) return true;
+  }
+  return false;
+}
+
+// ─── PDF GENERATION ──────────────────────────────────────
+async function generatePDF() {
+  const errEl = document.getElementById('signError');
+  if (!hasSig()) {
+    errEl.textContent = 'Поставьте подпись перед скачиванием PDF';
+    return;
+  }
+  errEl.textContent = '';
+
+  const { jsPDF } = window.jspdf;
+  const pdf   = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+  const W     = 210;
+  const M     = 14;
+  const col1x = M;
+  const col2x = W / 2 + 3;
+  const colW  = W / 2 - M - 4;
+  const today = new Date().toLocaleDateString('ru-RU');
+  const d     = formData;
+  const contractNo = 'BSA-' + d.iin.slice(-4) + '-' + new Date().getFullYear();
+
+  let y = 18;
+
+  const setFont  = (size, style) => { pdf.setFont('helvetica', style || 'normal'); pdf.setFontSize(size); };
+  const setColor = (r, g, b) => pdf.setTextColor(r, g, b);
+  const line     = (x1, y1, x2, y2, r, g, b) => {
+    pdf.setDrawColor(r||180, g||180, b||180);
+    pdf.line(x1, y1, x2, y2);
+  };
+  const wrap = (text, maxW) => pdf.splitTextToSize(String(text), maxW);
+
+  // ── TITLE ──
+  setFont(14, 'bold'); setColor(0,0,0);
+  pdf.text('ДОГОВОР ОБ ОКАЗАНИИ УСЛУГ', W/2, y, { align: 'center' });
+  y += 5.5;
+  setFont(8, 'normal'); setColor(150,150,150);
+  pdf.text('ҚЫЗМЕТ КӨРСЕТУ ШАРТЫ  ·  Business School Amanat  ·  № ' + contractNo, W/2, y, { align: 'center' });
+  y += 3; setColor(0,0,0);
+  line(M, y, W-M, y); y += 5;
+
+  // ── COLUMN HEADERS ──
+  setFont(8,'bold'); setColor(120,120,120);
+  pdf.text('РУССКИЙ', col1x, y);
+  pdf.text('ҚАЗАҚША', col2x, y);
+  setColor(0,0,0); y += 3;
+  line(col1x, y, col1x+colW, y, 200,169,110);
+  line(col2x, y, col2x+colW, y, 200,169,110);
+  y += 5;
+
+  // ── PARTY INFO ──
+  const infoRows = [
+    ['г. Алматы  |  Дата: ' + today, 'Алматы қ.  |  Күні: ' + today],
+    ['№ Договора: ' + contractNo, '№ Шарт: ' + contractNo],
+    ['Исполнитель: ИП Business School Amanat', 'Орындаушы: ИП Business School Amanat'],
+    ['БИН: 010512501511', 'БСН: 010512501511'],
+    ['Лицензия: KZ82UWQ06452512', 'Лицензия: KZ82UWQ06452512'],
+    ['Заказчик: ' + d.fio, 'Тапсырыс беруші: ' + d.fio],
+    ['ИИН: ' + d.iin, 'ЖСН: ' + d.iin],
+  ];
+  if (d.passport) infoRows.push(['Паспорт: ' + d.passport, 'Төлқұжат: ' + d.passport]);
+  if (d.address)  infoRows.push(['Адрес: ' + d.address, 'Мекенжай: ' + d.address]);
+  if (d.phone)    infoRows.push(['Телефон: ' + d.phone, 'Телефон: ' + d.phone]);
+  if (d.email)    infoRows.push(['Email: ' + d.email, 'Email: ' + d.email]);
+  infoRows.push(['Стоимость: ' + d.amount, 'Сомасы: ' + d.amount]);
+
+  setFont(8.5, 'normal');
+  infoRows.forEach(([ru, kz]) => {
+    const lRu = wrap(ru, colW);
+    const lKz = wrap(kz, colW);
+    const h   = Math.max(lRu.length, lKz.length) * 4.2;
+    setColor(30,30,30);
+    pdf.text(lRu, col1x, y);
+    pdf.text(lKz, col2x, y);
+    y += h + 0.8;
   });
+  y += 3; line(M, y, W-M, y); y += 6;
+
+  // ── CONTRACT BODY ──
+  const sections = [
+    {
+      title: '1. Предмет Договора / Шарттың мәні',
+      ru: [
+        '1.1. Исполнитель предоставляет: образовательные услуги по',
+        'товарному бизнесу (теория + практика); доступ в закрытый',
+        'канал с товарами; фулфилмент (по согласованию).',
+        '1.2. Заказчик принимает и оплачивает услуги по Договору.',
+      ],
+      kz: [
+        '1.1. Орындаушы ұсынады: тауарлық бизнес бойынша білім беру',
+        '(теория + практика); жабық каналға қолжетімділік;',
+        'фулфилмент (келісім бойынша).',
+        '1.2. Тапсырыс беруші қызметті қабылдайды және төлейді.',
+      ],
+    },
+    {
+      title: '2. Программа обучения / Оқу бағдарламасы',
+      ru: [
+        '2.1. Kaspi Магазин, Wildberries, Ozon, eBay, Shopify;',
+        'поставщики Китай/Турция/США; «Жабық чат»;',
+        'чек-листы, шаблоны, консультации преподавателей.',
+        '2.2. Исполнитель вправе менять программу, уведомив Заказчика.',
+      ],
+      kz: [
+        '2.1. Kaspi дүкен, Wildberries, Ozon, eBay, Shopify;',
+        'Қытай/Түркия/АҚШ жеткізушілері; «Жабық чат»;',
+        'чек-листер, үлгілер, оқытушы кеңестері.',
+        '2.2. Орындаушы бағдарламаны хабарлай отырып өзгерте алады.',
+      ],
+    },
+    {
+      title: '3. Порядок оказания услуг / Қызмет тәртібі',
+      ru: [
+        '3.1. Обучение — онлайн (видео, материалы, задания).',
+        '3.2. Доступ к каналу — с момента оплаты, до конца обучения.',
+        '3.3. Активация — не позднее 5 рабочих дней после оплаты.',
+        '3.4. Заказчик отвечает за достоверность своих данных.',
+      ],
+      kz: [
+        '3.1. Оқу — онлайн (бейне, материалдар, тапсырмалар).',
+        '3.2. Каналға қолжетімділік — төлемнен оқу аяқталғанға дейін.',
+        '3.3. Белсендіру — төлемнен кейін 5 жұмыс күні ішінде.',
+        '3.4. Тапсырыс беруші деректерінің дұрыстығына жауапты.',
+      ],
+    },
+    {
+      title: '4. Стоимость и оплата / Төлем — ' + d.amount,
+      ru: [
+        '4.1. Стоимость: ' + d.amount + '.',
+        '4.2. Оплата 100% до начала оказания услуг.',
+        '4.3. Способы: Kaspi QR или Kaspi Red (рассрочка).',
+        '4.5. Оплаченные средства ВОЗВРАТУ НЕ ПОДЛЕЖАТ',
+        '      (кроме случаев по ст. 668 ГК РК и зак. РК).',
+      ],
+      kz: [
+        '4.1. Құны: ' + d.amount + '.',
+        '4.2. Төлем — қызмет басталғанға дейін 100%.',
+        '4.3. Тәсілдер: Kaspi QR немесе Kaspi Red (бөліп төлеу).',
+        '4.5. Төленген қаражат ҚАЙТАРЫЛМАЙДЫ',
+        '      (ҚР АК 668-бабы мен заңнама ерекшеліктерінен басқа).',
+      ],
+    },
+    {
+      title: '5–6. Права сторон, конфиденциальность',
+      ru: [
+        '5.1. Исполнитель: оказывает услуги, обеспечивает доступ,',
+        'консультирует, вправе приостановить доступ при нарушении.',
+        '5.3. Заказчик: оплачивает, соблюдает правила,',
+        'не передаёт доступ третьим лицам.',
+        '6.1. Конфиденциальность материалов — срок договора + 2 года.',
+        '6.2. Персональные данные — только для исполнения Договора.',
+      ],
+      kz: [
+        '5.1. Орындаушы: қызмет көрсетеді, қолжетімділік береді,',
+        'кеңес береді, бұзушылық болса қолжетімділікті тоқтатады.',
+        '5.3. Тапсырыс беруші: уақытында төлейді, ережелерді сақтайды,',
+        'үшінші тұлғаларға қолжетімділік бермейді.',
+        '6.1. Материалдардың құпиялылығы — шарт + 2 жыл.',
+        '6.2. Дербес деректер — тек шартты орындау мақсатымен.',
+      ],
+    },
+    {
+      title: '7–10. Ответственность, форс-мажор, срок, прочее',
+      ru: [
+        '7. Ответственность — по законодательству РК.',
+        '8. Форс-мажор освобождает стороны при подтверждении.',
+        '9.1. Договор в силе с момента подписания и оплаты.',
+        '9.3. Расторжение — по соглашению или через суд.',
+        '10.2. Споры — переговоры 30 дней, затем суд по месту Исп.',
+        '10.3. Русский и казахский тексты имеют равную силу.',
+      ],
+      kz: [
+        '7. Жауапкершілік — ҚР заңнамасы бойынша.',
+        '8. Форс-мажор — растаған жағдайда жауапкершіліктен босатады.',
+        '9.1. Шарт — қол қойылып, төленгеннен кейін күшіне енеді.',
+        '9.3. Бұзу — келісім немесе сот арқылы.',
+        '10.2. Дауларды 30 күн — келіссөз, содан кейін сот.',
+        '10.3. Орыс және қазақ мәтіндері тең заңды күшке ие.',
+      ],
+    },
+    {
+      title: '11. Реквизиты исполнителя / Орындаушы деректемелері',
+      ru: [
+        'ИП Business School Amanat  |  БИН: 010512501511',
+        'ИИК: KZ96722C000028394403  |  Kaspi Bank',
+        'Адрес: Алматинская обл., с. Каскелен, Толе би, 39а, 050000',
+        'Тел.: +7 777 121 3963  |  Лиц.: KZ82UWQ06452512',
+      ],
+      kz: [
+        'ИП Business School Amanat  |  БСН: 010512501511',
+        'ЖСК: KZ96722C000028394403  |  Kaspi Bank',
+        'Мекенжай: Алматы обл., Қаскелен, Төле би, 39а, 050000',
+        'Тел.: +7 777 121 3963  |  Лиц.: KZ82UWQ06452512',
+      ],
+    },
+  ];
+
+  const lh = 4.2;
+  sections.forEach(s => {
+    if (y > 255) { pdf.addPage(); y = 14; }
+    setFont(9, 'bold'); setColor(0,0,0);
+    pdf.text(s.title, M, y); y += 5;
+
+    const ruW = s.ru.flatMap(l => wrap(l, colW));
+    const kzW = s.kz.flatMap(l => wrap(l, colW));
+    setFont(8, 'normal'); setColor(30,30,30);
+    pdf.text(ruW, col1x, y);
+    pdf.text(kzW, col2x, y);
+    y += Math.max(ruW.length, kzW.length) * lh + 5;
+    line(M, y-2, W-M, y-2); y += 3;
+  });
+
+  // ── SIGNATURES ──
+  if (y > 230) { pdf.addPage(); y = 14; }
+  y += 4;
+  setFont(9, 'bold'); setColor(0,0,0);
+  pdf.text('ПОДПИСИ СТОРОН / ТАРАПТАРДЫҢ ҚОЛДАРЫ', M, y); y += 7;
+
+  setFont(8, 'normal'); setColor(80,80,80);
+  pdf.text('Исполнитель / Орындаушы', col1x, y);
+  pdf.text('Заказчик / Тапсырыс беруші', col2x, y);
+  y += 4;
+
+  line(col1x, y+18, col1x+colW, y+18);
+  setFont(7.5, 'normal'); setColor(120,120,120);
+  pdf.text('Ералиев Б.Н.', col1x, y+23);
+
+  const sigImg = getSigCanvas().toDataURL('image/png');
+  pdf.addImage(sigImg, 'PNG', col2x, y, colW*0.75, 22);
+  line(col2x, y+22, col2x+colW, y+22);
+  setFont(7.5, 'normal'); setColor(120,120,120);
+  pdf.text(d.fio, col2x, y+27);
+  y += 32;
+
+  // ── FOOTER ──
+  line(M, y, W-M, y); y += 4;
+  setFont(7.5, 'normal'); setColor(160,160,160);
+  pdf.text('Дата подписания / Қол қою күні: ' + today, M, y);
+  pdf.text('ИИН / ЖСН: ' + d.iin, W-M, y, { align: 'right' });
+
+  const safeName = d.fio.replace(/\s+/g, '_').replace(/[^a-zA-Zа-яА-ЯёЁ_]/g, '');
+  pdf.save('Dogovor_Amanat_' + safeName + '_' + today.replace(/\./g,'-') + '.pdf');
+
+  document.getElementById('stepSign').style.display = 'none';
+  document.getElementById('stepDone').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── RESTART ─────────────────────────────────────────────
+function restart() {
+  ['fio','iin','passport','address','phone','email'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  formData = {};
+  sigInitialized = false;
+  sigCtx = null;
+  document.getElementById('stepDone').style.display     = 'none';
+  document.getElementById('stepForm').style.display     = 'block';
+  document.getElementById('stepContract').style.display = 'none';
+  document.getElementById('stepSign').style.display     = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 </body>
