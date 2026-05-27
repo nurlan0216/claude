@@ -797,24 +797,40 @@ async function generatePDF() {
 
     const safeName = d.fio.replace(/\s+/g, '_').replace(/[^a-zA-Zа-яА-ЯёЁ_]/g, '');
     const today2 = new Date().toLocaleDateString('ru-RU').replace(/\./g, '-');
-    pdf.save('Dogovor_Amanat_' + safeName + '_' + today2 + '.pdf');
+    const pdfFileName = 'Dogovor_Amanat_' + safeName + '_' + today2 + '.pdf';
+    pdf.save(pdfFileName);
 
     // ─── ОТПРАВКА В TELEGRAM И GOOGLE SHEETS ───────────────
     const TG_TOKEN = "7931870492:AAEVgBcZr76Ud1f8P_OnBM8ETBY3wqy1GQY";
-    const TG_CHAT  = "1804783478"; // ← замените на ваш Chat ID из getUpdates
+    const TG_CHAT  = "1804783478";
     const SHEET_URL= "https://script.google.com/macros/s/AKfycbwXDR8glnHhuImzwsIxdH3ti1hctyVkCHSwvXrkLbqSIqU5zPT9ROxdlg3gyDnUjjmP/exec";
 
-    const tgText = `📋 *НОВЫЙ ДОГОВОР — Business School Amanat*\n\n👤 *ФИО:* ${d.fio}\n🆔 *ИИН:* ${d.iin}\n📍 *Адрес:* ${d.address||'—'}\n📞 *Телефон:* ${d.phone||'—'}\n📧 *Email:* ${d.email||'—'}\n💰 *Сумма:* ${d.amount}\n📅 *Дата:* ${today}\n🔖 *№:* ${contractNo}`;
+    const tgCaption = `📋 *НОВЫЙ ДОГОВОР — Business School Amanat*\n\n👤 *ФИО:* ${d.fio}\n🆔 *ИИН:* ${d.iin}\n📍 *Адрес:* ${d.address||'—'}\n📞 *Телефон:* ${d.phone||'—'}\n📧 *Email:* ${d.email||'—'}\n💰 *Сумма:* ${d.amount}\n📅 *Дата:* ${today}\n🔖 *№:* ${contractNo}`;
 
-    // Отправка в Telegram
+    // Отправка PDF + подписи в Telegram через sendDocument
     try {
-      const tgRes = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ chat_id: TG_CHAT, text: tgText, parse_mode: 'Markdown' })
+      const pdfBlob = pdf.output('blob');
+      const formDataTG = new FormData();
+      formDataTG.append('chat_id', TG_CHAT);
+      formDataTG.append('caption', tgCaption);
+      formDataTG.append('parse_mode', 'Markdown');
+      formDataTG.append('document', pdfBlob, pdfFileName);
+
+      const tgRes = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendDocument`, {
+        method: 'POST',
+        body: formDataTG
       });
       const tgJson = await tgRes.json();
-      if (!tgJson.ok) console.warn('TG error:', tgJson.description);
-      else console.log('✅ Telegram: OK');
+      if (!tgJson.ok) {
+        console.warn('TG sendDocument error:', tgJson.description);
+        // Fallback: отправить только текст
+        await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ chat_id: TG_CHAT, text: tgCaption, parse_mode: 'Markdown' })
+        });
+      } else {
+        console.log('✅ Telegram PDF отправлен');
+      }
     } catch(e) { console.warn('TG error:', e); }
 
     // Отправка в Google Sheets
