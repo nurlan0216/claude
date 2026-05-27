@@ -801,24 +801,32 @@ async function generatePDF() {
 
     // ─── ОТПРАВКА В TELEGRAM И GOOGLE SHEETS ───────────────
     const TG_TOKEN = "7931870492:AAEVgBcZr76Ud1f8P_OnBM8ETBY3wqy1GQY";
-    const TG_CHAT  = "7931870492";
-    const SHEET_URL= "https://script.google.com/macros/s/AKfycbwKPLi0ZblPZ0CJ4KNtfqMDmijH_D57oApWi5a-vFt_n73Y-oGfHK0s-XaQ3FhG-J7u/exec";
+    const TG_CHAT  = "ВСТАВЬТЕ_CHAT_ID_СЮДА"; // ← замените на ваш Chat ID из getUpdates
+    const SHEET_URL= "https://script.google.com/macros/s/AKfycbwXDR8glnHhuImzwsIxdH3ti1hctyVkCHSwvXrkLbqSIqU5zPT9ROxdlg3gyDnUjjmP/exec";
 
     const tgText = `📋 *НОВЫЙ ДОГОВОР — Business School Amanat*\n\n👤 *ФИО:* ${d.fio}\n🆔 *ИИН:* ${d.iin}\n📍 *Адрес:* ${d.address||'—'}\n📞 *Телефон:* ${d.phone||'—'}\n📧 *Email:* ${d.email||'—'}\n💰 *Сумма:* ${d.amount}\n📅 *Дата:* ${today}\n🔖 *№:* ${contractNo}`;
 
+    // Отправка в Telegram
     try {
-      fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+      const tgRes = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ chat_id: TG_CHAT, text: tgText, parse_mode: 'Markdown' })
       });
-    } catch(e) {}
+      const tgJson = await tgRes.json();
+      if (!tgJson.ok) console.warn('TG error:', tgJson.description);
+      else console.log('✅ Telegram: OK');
+    } catch(e) { console.warn('TG error:', e); }
 
+    // Отправка в Google Sheets
     try {
-      fetch(SHEET_URL, {
-        method:'POST', headers:{'Content-Type':'application/json'},
+      await fetch(SHEET_URL, {
+        method:'POST',
+        mode: 'no-cors',
+        headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ date: today, name: d.fio, iin: d.iin, address: d.address||'', phone: d.phone||'', email: d.email||'', amount: d.amount, contract_no: contractNo })
       });
-    } catch(e) {}
+      console.log('✅ Google Sheets: OK');
+    } catch(e) { console.warn('Sheets error:', e); }
     // ───────────────────────────────────────────────────────
 
 
