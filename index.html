@@ -1,30 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Business School Amanat — Подписание договора</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script>
-// Загружаем кириллический шрифт PTSans через fetch + base64
-let cyrillicFontB64 = null;
-let cyrillicFontBoldB64 = null;
-
-async function loadCyrillicFont() {
-  if (cyrillicFontB64) return; // уже загружен
-  try {
-    // Используем встроенный в jsPDF шрифт с поддержкой кириллицы через workaround:
-    // конвертируем текст в latin через transliteration не нужно —
-    // вместо этого используем jsPDF с UTF-8 через встроенный метод
-    // Подключаем Google Fonts Roboto через ArrayBuffer
-    const [r1, r2] = await Promise.all([
-      fetch('https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2'),
-      fetch('https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc4.woff2')
-    ]);
-    // woff2 нельзя использовать напрямую, используем другой подход
-  } catch(e) {}
-}
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Manrope:wght@300;400;500;600&display=swap');
 
@@ -669,14 +650,152 @@ function renderContract() {
   document.getElementById('contractPreview').innerHTML = html;
 }
 
-// ── PDF GENERATION (двуязычный) ─────────────────────────────────────────────
+// ── PDF GENERATION — html2canvas (кириллица корректна) ──────────────────────
 async function generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const d = formData;
+
+  // Build a hidden print-ready div with all contract content + signature
+  const printDiv = document.createElement('div');
+  printDiv.style.cssText = `
+    position:fixed; left:-9999px; top:0;
+    width:794px; background:#fff; color:#111;
+    font-family:'Manrope','Arial',sans-serif; font-size:11px; line-height:1.7;
+    padding:40px 48px; box-sizing:border-box;
+  `;
+
+  // Collect signature image
+  const offscreen = document.createElement('canvas');
+  offscreen.width = canvas.width;
+  offscreen.height = canvas.height;
+  const offCtx = offscreen.getContext('2d');
+  offCtx.fillStyle = '#ffffff';
+  offCtx.fillRect(0, 0, offscreen.width, offscreen.height);
+  offCtx.drawImage(canvas, 0, 0);
+  const sigData = offscreen.toDataURL('image/jpeg', 0.92);
+
+  printDiv.innerHTML = `
+    <div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #c8a96e;padding-bottom:16px">
+      <div style="font-size:20px;font-weight:700;letter-spacing:0.05em;color:#111">BUSINESS SCHOOL AMANAT</div>
+      <div style="font-size:11px;color:#888;letter-spacing:0.08em;margin-top:4px">ДОГОВОР / ШАРТ — ОКАЗАНИЕ ОБРАЗОВАТЕЛЬНЫХ УСЛУГ / БІЛІМ БЕРУ ҚЫЗМЕТТЕРІ</div>
+      <div style="font-size:10px;color:#aaa;margin-top:4px">г. Алматы / Алматы қ., ${d.date}</div>
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
+      <tr>
+        <td style="width:50%;padding-right:16px;vertical-align:top;border-right:1px solid #c8a96e">
+          <div style="font-size:10px;font-weight:700;color:#c8a96e;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">[ RU ] РУССКИЙ</div>
+          <div style="margin-bottom:6px"><strong>Исполнитель:</strong> ИП Business School Amanat, ЕРАЛИЕВ БАКЫТЖАН НУРКЕНУЛЫ, лицензия KZ82UWQ06452512</div>
+          <div style="margin-bottom:6px"><strong>Заказчик:</strong> ${d.fio}</div>
+          <div style="color:#555;font-size:10px">ИИН: ${d.iin} | Адрес: ${d.address}<br>Тел: ${d.phone}${d.email ? ' | Email: '+d.email : ''}</div>
+        </td>
+        <td style="width:50%;padding-left:16px;vertical-align:top">
+          <div style="font-size:10px;font-weight:700;color:#c8a96e;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">[ KZ ] ҚАЗАҚША</div>
+          <div style="margin-bottom:6px"><strong>Орындаушы:</strong> ИП Business School Amanat, ЕРАЛИЕВ БАКЫТЖАН НУРКЕНУЛЫ, лицензия KZ82UWQ06452512</div>
+          <div style="margin-bottom:6px"><strong>Тапсырыс беруші:</strong> ${d.fio}</div>
+          <div style="color:#555;font-size:10px">ЖСН: ${d.iin} | Мекенжай: ${d.address}<br>Тел: ${d.phone}${d.email ? ' | Email: '+d.email : ''}</div>
+        </td>
+      </tr>
+    </table>
+
+    ${[
+      {ru:['1. ПРЕДМЕТ ДОГОВОРА','1.1. Образовательные услуги по товарному бизнесу (теория и практика); доступ в закрытый канал с актуальным ассортиментом товаров; услуга фулфилмента.\n1.2. Заказчик обязуется оплатить услуги в соответствии с условиями Договора.'],
+       kz:['1. ШАРТТЫҢ МӘНІ','1.1. Тауарлық бизнес бойынша білім беру қызметтері (теория және практика); тауарлар бар жабық каналға қолжетімділік; фулфилмент қызметі.\n1.2. Тапсырыс беруші Шарт талаптарына сәйкес төлем жасауға міндеттенеді.']},
+      {ru:['2. ПРОГРАММА ОБУЧЕНИЯ','Kaspi магазин, Wildberries, Ozon, Ebay, Shopify. Поставщики: Китай, Турция, Америка. Доступ к закрытому каналу «Жабык чат», чек-листы, шаблоны, консультации.'],
+       kz:['2. ОҚУ БАҒДАРЛАМАСЫ','Kaspi дүкені, Wildberries, Ozon, Ebay, Shopify. Жеткізушілер: Қытай, Түркия, Америка. «Жабық чат» каналы, чек-листтер, үлгілер, кеңес.']},
+      {ru:['3. ПОРЯДОК ОКАЗАНИЯ УСЛУГ','3.1. Обучение в формате онлайн-курсов.\n3.2. Доступ к закрытому каналу — на весь срок Договора.\n3.4. Заказчик несёт ответственность за корректность предоставленных данных.'],
+       kz:['3. ҚЫЗМЕТ КӨРСЕТУ ТӘРТІБІ','3.1. Оқу онлайн-курс форматында.\n3.2. Жабық каналға қолжетімділік — шарт мерзімі бойы.\n3.4. Тапсырыс беруші деректердің дұрыстығы үшін жауапты.']},
+      {ru:['4. ПОРЯДОК ОПЛАТЫ',`4.1. Толық сома: 500 000 теңге. Жеңілдікпен: 250 000 теңге. Акция: 135 000 теңге.\nОсы шарт бойынша: ${d.amount}.\n4.2. 100% оплата до начала оказания услуг.\n4.3. Kaspi QR или Kaspi Red (рассрочка).\n4.5. Оплаченные средства возврату не подлежат (кроме случаев по зак. РК).`],
+       kz:['4. ТӨЛЕМ ТӘРТІБІ',`4.1. Толық құны: 500 000 теңге. Жеңілдікпен: 250 000 теңге. Акциялық: 135 000 теңге.\nОсы шарт бойынша сома: ${d.amount}.\n4.2. Қызмет басталғанға дейін 100% төлем.\n4.3. Kaspi QR немесе Kaspi Red (бөліп төлеу).\n4.5. Төленген қаражат ҚР заңнамасы бойынша жағдайлардан басқа қайтарылмайды.`]},
+      {ru:['5–9. ПРАВА, ОБЯЗАННОСТИ, ПРОЧЕЕ','5.1. Исполнитель: предоставить услуги, обеспечить доступ к каналу, консультировать.\n5.3. Заказчик: своевременно оплатить, соблюдать правила, не передавать доступ третьим лицам.\n6. Ответственность — по зак. РК. 7. Форс-мажор освобождает стороны. 8. Договор в силе с момента подписания и оплаты. 9. Изменения — письменно.'],
+       kz:['5–9. МІНДЕТТЕР ЖӘНЕ БАСҚА ШАРТТАР','5.1. Орындаушы: қызметтерді толық, каналға қолжетімділік, кеңес беру.\n5.3. Тапсырыс беруші: уақытылы төлеу, ережелерді сақтау, үшінші тұлғаларға бермеу.\n6. Жауапкершілік — ҚР заңнамасы. 7. Форс-мажор босатады. 8. Шарт қол қойылып, төлем жасалған сәттен күшіне енеді. 9. Өзгерістер — жазбаша.']},
+      {ru:['10. РЕКВИЗИТЫ / РЕКВИЗИТТЕР','ИП Business School Amanat | ИИК: KZ96722C000028394403 | БИН: 010512501511\nАдрес: с. Каскелен, Толе би 39а | Тел: +7 777 121 3963 | Лиц: KZ82UWQ06452512'],
+       kz:['10. РЕКВИЗИТТЕР','ИП Business School Amanat | ЖСК: KZ96722C000028394403 | БСН: 010512501511\nМекенжай: Қаскелен к., Төле би 39а | Тел: +7 777 121 3963 | Лиц: KZ82UWQ06452512']}
+    ].map(s => `
+      <table style="width:100%;border-collapse:collapse;margin-bottom:10px;border-top:1px solid #e8e0d0">
+        <tr>
+          <td style="width:50%;padding:8px 16px 8px 0;vertical-align:top;border-right:1px solid #c8a96e">
+            <div style="font-weight:700;color:#333;margin-bottom:4px;font-size:10px">${s.ru[0]}</div>
+            <div style="color:#444;white-space:pre-line;font-size:10px">${s.ru[1]}</div>
+          </td>
+          <td style="width:50%;padding:8px 0 8px 16px;vertical-align:top">
+            <div style="font-weight:700;color:#333;margin-bottom:4px;font-size:10px">${s.kz[0]}</div>
+            <div style="color:#444;white-space:pre-line;font-size:10px">${s.kz[1]}</div>
+          </td>
+        </tr>
+      </table>
+    `).join('')}
+
+    <div style="border-top:2px solid #c8a96e;margin-top:20px;padding-top:16px">
+      <div style="font-weight:700;font-size:11px;margin-bottom:16px">ПОДПИСИ СТОРОН / ТАРАПТАРДЫҢ ҚОЛДАРЫ</div>
+      <table style="width:100%;border-collapse:collapse">
+        <tr>
+          <td style="width:50%;padding-right:20px;vertical-align:top;border-right:1px solid #c8a96e">
+            <div style="font-size:10px;color:#555;margin-bottom:4px">Орындаушы / Исполнитель:</div>
+            <div style="font-weight:600;margin-bottom:2px">ИП Business School Amanat</div>
+            <div style="font-size:10px;margin-bottom:20px">Ералиев Бакытжан Нуркенулы</div>
+            <div style="border-bottom:1px solid #999;width:200px;margin-bottom:4px"></div>
+            <div style="font-size:9px;color:#aaa">қол қою / подпись</div>
+          </td>
+          <td style="width:50%;padding-left:20px;vertical-align:top">
+            <div style="font-size:10px;color:#555;margin-bottom:4px">Тапсырыс беруші / Заказчик:</div>
+            <div style="font-weight:600;margin-bottom:2px">${d.fio}</div>
+            <div style="font-size:10px;margin-bottom:4px">ИИН / ЖСН: ${d.iin}</div>
+            <img src="${sigData}" style="height:60px;max-width:220px;display:block;margin-bottom:0">
+            <div style="border-bottom:1px solid #999;width:200px;margin-bottom:4px"></div>
+            <div style="font-size:9px;color:#aaa">қол қою / подпись</div>
+          </td>
+        </tr>
+      </table>
+      <div style="text-align:center;font-size:9px;color:#bbb;margin-top:20px;border-top:1px solid #eee;padding-top:8px">
+        Business School Amanat &nbsp;|&nbsp; +7 777 121 3963 &nbsp;|&nbsp; Дата / Күні: ${d.date}
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(printDiv);
+
+  try {
+    const canvas2 = await html2canvas(printDiv, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false
+    });
+    document.body.removeChild(printDiv);
+
+    const imgData = canvas2.toDataURL('image/jpeg', 0.92);
+    const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+    const W = 210, H = 297;
+    const imgW = W;
+    const imgH = canvas2.height * (W / canvas2.width);
+
+    if (imgH <= H) {
+      doc.addImage(imgData, 'JPEG', 0, 0, imgW, imgH);
+    } else {
+      // Multi-page
+      let yPos = 0;
+      while (yPos < imgH) {
+        if (yPos > 0) doc.addPage();
+        doc.addImage(imgData, 'JPEG', 0, -yPos, imgW, imgH);
+        yPos += H;
+      }
+    }
+    return doc;
+  } catch(e) {
+    document.body.removeChild(printDiv);
+    throw e;
+  }
+}
+
+// ── LEGACY stub (kept for compatibility) ─────────────────────────────────────
+async function _generatePDF_OLD_UNUSED() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
   const d = formData;
   const W = 210, ml = 12, mr = 12, lw = W - ml - mr;
-  const col = lw / 2 - 4; // column width
-  const midX = ml + col + 8; // second column start
+  const col = lw / 2 - 4;
+  const midX = ml + col + 8;
 
   function addText(text, x, y, opts={}) {
     const { size=9, bold=false, color=[30,30,30], align='left', maxWidth=col } = opts;
